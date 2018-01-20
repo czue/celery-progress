@@ -81,8 +81,8 @@ The `initProgressBar` function takes an optional object of options. The followin
 | pollInterval | How frequently to poll for progress (in milliseconds) | 500 |
 | progressBarId | Override the ID used for the progress bar | 'progress-bar' |
 | progressBarMessageId | Override the ID used for the progress bar message | 'progress-bar-message' |
-| progressBarElement | Override the *element* used for the progress bar. If specified, `progressBarId` will be ignored. | document.getElementById(progressBarId) |
-| progressBarMessageElement | Override the *element* used for the progress bar message. If specified, `progressBarMessageId` will be ignored. | document.getElementById(progressBarMessageId) |
+| progressBarElement | Override the *element* used for the progress bar. If specified, progressBarId will be ignored. | document.getElementById(progressBarId) |
+| progressBarMessageElement | Override the *element* used for the progress bar message. If specified, progressBarMessageId will be ignored. | document.getElementById(progressBarMessageId) |
 | onProgress | function to call when progress is updated | CeleryProgressBar.onProgressDefault |
 | onSuccess | function to call when progress successfully completes | CeleryProgressBar.onSuccessDefault |
 | onError | function to call when progress completes with an error | CeleryProgressBar.onErrorDefault |
