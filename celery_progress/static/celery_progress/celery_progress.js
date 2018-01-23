@@ -4,12 +4,13 @@ var CeleryProgressBar = (function () {
         progressBarMessageElement.innerHTML = "Success!";
     }
 
-        function onErrorDefault(progressBarElement, progressBarMessageElement) {
+    function onErrorDefault(progressBarElement, progressBarMessageElement) {
         progressBarElement.style.backgroundColor = '#dc4f63';
         progressBarMessageElement.innerHTML = "Uh-Oh, something went wrong!";
     }
 
     function onProgressDefault(progressBarElement, progressBarMessageElement, progress) {
+        progressBarElement.style.backgroundColor = '#68a9ef';
         progressBarElement.style.width = progress.percent + "%";
         progressBarMessageElement.innerHTML = progress.current + ' of ' + progress.total + ' processed.';
     }
