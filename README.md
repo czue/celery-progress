@@ -6,19 +6,31 @@ Super simple setup. Lots of customization available.
 
 ## Usage
 
+### Prerequisites
+
+First add celery_progress to your `INSTALLED_APPS` in `settings.py`.
+
+Then add the following url config to your main `urls.py`:
+
+```python
+url(r'^celery-progress/', include('celery_progress.urls')),  # the endpoint is configurable
+```
+
 ### Recording Progress
 
 In your task you should add something like this:
 
 ```python
+from celery import shared_task
 from celery_progress.backend import ProgressRecorder
+impot time
 
 @shared_task(bind=True)
 def my_task(self, seconds):
     progress_recorder = ProgressRecorder(self)
     for i in range(seconds):
-        time.sleep(i)
-        progress_recorder.set_progress(i, seconds)
+        time.sleep(1)
+        progress_recorder.set_progress(i + 1, seconds)
     return 'done'
 ```
 
@@ -30,7 +42,7 @@ In the view where you call the task you need to get the task ID like so:
 ```python
 def progress_view(request):
     result = my_task.delay(10)
-    return render(request, 'display_progress.html', context={'task_id': task_id})
+    return render(request, 'display_progress.html', context={'task_id': result.task_id})
 ```
 
 Then in the page you want to show the progress bar you just do the following.
