@@ -4,11 +4,15 @@ Drop in, dependency-free progress bars for your Django/Celery applications.
 
 Super simple setup. Lots of customization available.
 
+## Demo
+
+[Celery Progress Bar demo on Build With Django](https://buildwithdjango.com/projects/celery-progress/)
+
 ## Usage
 
 ### Prerequisites
 
-First add celery_progress to your `INSTALLED_APPS` in `settings.py`.
+First add `celery_progress` to your `INSTALLED_APPS` in `settings.py`.
 
 Then add the following url config to your main `urls.py`:
 
@@ -23,7 +27,7 @@ In your task you should add something like this:
 ```python
 from celery import shared_task
 from celery_progress.backend import ProgressRecorder
-impot time
+import time
 
 @shared_task(bind=True)
 def my_task(self, seconds):
@@ -47,7 +51,7 @@ def progress_view(request):
 
 Then in the page you want to show the progress bar you just do the following.
 
-1. Add the following HTML wherever you want your progress bar to appear:
+#### Add the following HTML wherever you want your progress bar to appear:
 
 **display_progress.html**
 ```html
@@ -57,14 +61,14 @@ Then in the page you want to show the progress bar you just do the following.
 <div id="progress-bar-message">Waiting for progress to start...</div>
 ```
 
-2. Import the javascript file.
+#### Import the javascript file.
 
 **display_progress.html**
 ```html
 <script src="{% static 'celery_progress/celery_progress.js' %}"></script>
 ```
 
-3. Initialize the progress bar:
+#### Initialize the progress bar:
 
 ```javascript
 // vanilla JS version
