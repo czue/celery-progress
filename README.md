@@ -8,6 +8,12 @@ Super simple setup. Lots of customization available.
 
 [Celery Progress Bar demo on Build With Django](https://buildwithdjango.com/projects/celery-progress/)
 
+## Installation
+
+```bash
+pip install celery-progress
+```
+
 ## Usage
 
 ### Prerequisites
