@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
-from celery.result import AsyncResult
 from decimal import Decimal
 
+from celery.result import AsyncResult
 
 PROGRESS_STATE = 'PROGRESS'
 
@@ -26,7 +26,10 @@ class ProgressRecorder(AbtractProgressRecorder):
         self.task = task
 
     def set_progress(self, current, total):
-        percent = round((Decimal(current) / Decimal(total)) * Decimal(100), 2) if total > 0 else 0
+        percent = 0
+        if total > 0:
+            percent = (Decimal(current) / Decimal(total)) * Decimal(100)
+            percent = float(round(percent, 2))
         self.task.update_state(
             state=PROGRESS_STATE,
             meta={
@@ -72,11 +75,11 @@ def _get_completed_progress():
         'percent': 100,
     }
 
+
 def _get_unknown_progress():
-    {
+    return {
         'current': 0,
         'total': 100,
         'percent': 0,
     }
-
 
