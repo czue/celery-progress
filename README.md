@@ -78,8 +78,8 @@ Then in the page you want to show the progress bar you just do the following.
 
 ```javascript
 // vanilla JS version
-var progressUrl = "{% url 'celery_progress:task_status' task_id %}";
 document.addEventListener("DOMContentLoaded", function () {
+  var progressUrl = "{% url 'celery_progress:task_status' task_id %}";
   CeleryProgressBar.initProgressBar(progressUrl);
 });
 ```
@@ -88,8 +88,8 @@ or
 
 ```javascript
 // JQuery
-var progressUrl = "{% url 'celery_progress:task_status' task_id %}";
 $(function () {
+  var progressUrl = "{% url 'celery_progress:task_status' task_id %}";
   CeleryProgressBar.initProgressBar(progressUrl)
 });
 ```
