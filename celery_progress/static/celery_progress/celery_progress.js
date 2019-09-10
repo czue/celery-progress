@@ -4,6 +4,10 @@ var CeleryProgressBar = (function () {
         progressBarMessageElement.innerHTML = "Success!";
     }
 
+    function onResultDefault(resultElement, result) {
+        resultElement.innerHTML = result;
+    }
+
     function onErrorDefault(progressBarElement, progressBarMessageElement) {
         progressBarElement.style.backgroundColor = '#dc4f63';
         progressBarMessageElement.innerHTML = "Uh-Oh, something went wrong!";
@@ -25,6 +29,10 @@ var CeleryProgressBar = (function () {
         var onSuccess = options.onSuccess || onSuccessDefault;
         var onError = options.onError || onErrorDefault;
         var pollInterval = options.pollInterval || 500;
+        var resultElementId = options.resultElementId || 'celery-result';
+        var resultElement = options.resultElement || document.getElementById(resultElementId);
+        var onResult = options.onResult || onResultDefault;
+
 
         fetch(progressUrl).then(function(response) {
             response.json().then(function(data) {
@@ -39,12 +47,16 @@ var CeleryProgressBar = (function () {
                     } else {
                         onError(progressBarElement, progressBarMessageElement);
                     }
+                    if (data.result) {
+                        onResult(resultElement, data.result);
+                    }
                 }
             });
         });
     }
     return {
         onSuccessDefault: onSuccessDefault,
+        onResultDefault: onResultDefault,
         onErrorDefault: onErrorDefault,
         onProgressDefault: onProgressDefault,
         updateProgress: updateProgress,

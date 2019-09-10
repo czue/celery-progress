@@ -38,10 +38,12 @@ import time
 @shared_task(bind=True)
 def my_task(self, seconds):
     progress_recorder = ProgressRecorder(self)
+    result = 0
     for i in range(seconds):
         time.sleep(1)
+        result += i
         progress_recorder.set_progress(i + 1, seconds)
-    return 'done'
+    return result
 ```
 
 ### Displaying progress
@@ -94,6 +96,30 @@ $(function () {
 });
 ```
 
+#### Initialize the result block:
+
+**display_progress.html**
+```html
+<div id="celery-result"></div>
+```
+
+```javascript
+// JQuery
+var progressUrl = "{% url 'celery_progress:task_status' task_id %}";
+
+function customResult(resultElement, result) {
+    $( resultElement ).append(
+            $('<p>').text('Sum of all seconds is ' + result)
+    );
+}
+
+$(function () {
+  CeleryProgressBar.initProgressBar(progressUrl, {
+    onResult: customResult,
+  })
+});
+```
+
 ## Customization
 
 The `initProgressBar` function takes an optional object of options. The following options are supported:
@@ -105,6 +131,9 @@ The `initProgressBar` function takes an optional object of options. The followin
 | progressBarMessageId | Override the ID used for the progress bar message | 'progress-bar-message' |
 | progressBarElement | Override the *element* used for the progress bar. If specified, progressBarId will be ignored. | document.getElementById(progressBarId) |
 | progressBarMessageElement | Override the *element* used for the progress bar message. If specified, progressBarMessageId will be ignored. | document.getElementById(progressBarMessageId) |
+| resultElementId | Override the ID used for the result | 'celery-result' |
+| resultElement | Override the *element* used for the result. If specified, resultElementId will be ignored. | document.getElementById(resultElementId) |
 | onProgress | function to call when progress is updated | CeleryProgressBar.onProgressDefault |
 | onSuccess | function to call when progress successfully completes | CeleryProgressBar.onSuccessDefault |
 | onError | function to call when progress completes with an error | CeleryProgressBar.onErrorDefault |
+| onResult | function to call when returned non emty result | CeleryProgressBar.onResultDefault |
