@@ -48,11 +48,12 @@ class Progress(object):
 
     def get_info(self):
         if self.result.ready():
+            success = self.result.successful()
             return {
                 'complete': True,
-                'success': self.result.successful(),
+                'success': success,
                 'progress': _get_completed_progress(),
-                'result': self.result.get(self.task_id)
+                'result': self.result.get(self.task_id) if success else None,
             }
         elif self.result.state == PROGRESS_STATE:
             return {
