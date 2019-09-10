@@ -5,7 +5,9 @@ var CeleryProgressBar = (function () {
     }
 
     function onResultDefault(resultElement, result) {
-        resultElement.innerHTML = result;
+        if (resultElement) {
+            resultElement.innerHTML = result;
+        }
     }
 
     function onErrorDefault(progressBarElement, progressBarMessageElement) {
