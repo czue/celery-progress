@@ -39,6 +39,18 @@ class ProgressRecorder(AbtractProgressRecorder):
             }
         )
 
+    def stop_task(self, current, total, exc):
+        self.task.update_state(
+            state='FAILURE',
+            meta={
+                'current': current,
+                'total': total,
+                'percent': 100.0,
+                'exc_message': str(exc),
+                'exc_type': str(type(exc))
+            }
+        )
+
 
 class Progress(object):
 
