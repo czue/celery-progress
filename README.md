@@ -104,19 +104,23 @@ To do that follow the steps below. Result handling can also be customized.
 
 #### Initialize the result block:
 
+This is all that's needed to render the result on the page.
+
 **display_progress.html**
 ```html
 <div id="celery-result"></div>
 ```
+
+But more likely you will want to customize how the result looks, which can be done as below:
 
 ```javascript
 // JQuery
 var progressUrl = "{% url 'celery_progress:task_status' task_id %}";
 
 function customResult(resultElement, result) {
-    $( resultElement ).append(
-            $('<p>').text('Sum of all seconds is ' + result)
-    );
+  $( resultElement ).append(
+    $('<p>').text('Sum of all seconds is ' + result)
+  );
 }
 
 $(function () {
