@@ -96,6 +96,12 @@ $(function () {
 });
 ```
 
+### Displaying the result of a task
+
+If you'd like you can also display the result of your task on the front end. 
+
+To do that follow the steps below. Result handling can also be customized.
+
 #### Initialize the result block:
 
 **display_progress.html**
