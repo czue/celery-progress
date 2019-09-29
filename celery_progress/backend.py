@@ -1,12 +1,14 @@
 from abc import ABCMeta, abstractmethod
 from decimal import Decimal
 
+from asgiref.sync import async_to_sync
 from celery.result import AsyncResult
+from channels.layers import get_channel_layer
 
 PROGRESS_STATE = 'PROGRESS'
 
 
-class AbtractProgressRecorder(object):
+class AbstractProgressRecorder(object):
     __metaclass__ = ABCMeta
 
     @abstractmethod
@@ -14,13 +16,13 @@ class AbtractProgressRecorder(object):
         pass
 
 
-class ConsoleProgressRecorder(AbtractProgressRecorder):
+class ConsoleProgressRecorder(AbstractProgressRecorder):
 
     def set_progress(self, current, total):
         print('processed {} items of {}'.format(current, total))
 
 
-class ProgressRecorder(AbtractProgressRecorder):
+class ProgressRecorder(AbstractProgressRecorder):
 
     def __init__(self, task):
         self.task = task
@@ -49,6 +51,27 @@ class ProgressRecorder(AbtractProgressRecorder):
                 'exc_message': str(exc),
                 'exc_type': str(type(exc))
             }
+        )
+
+
+class WebSocketProgressRecorder(ProgressRecorder):
+
+    def set_progress(self, current, total):
+        super().set_progress(current, total)
+        channel_layer = get_channel_layer()
+        task_id = self.task.request.id
+        async_to_sync(channel_layer.group_send)(
+            task_id,
+            {'type': 'update_task_progress', 'data': {**Progress(task_id).get_info()}}
+        )
+
+    def stop_task(self, current, total, exc):
+        super().stop_task(current, total, exc)
+        channel_layer = get_channel_layer()
+        task_id = self.task.request.id
+        async_to_sync(channel_layer.group_send)(
+            task_id,
+            {'type': 'update_task_progress', 'data': {**Progress(task_id).get_info()}}
         )
 
 
