@@ -56,23 +56,21 @@ class ProgressRecorder(AbstractProgressRecorder):
 
 class WebSocketProgressRecorder(ProgressRecorder):
 
-    def set_progress(self, current, total):
-        super().set_progress(current, total)
+    @staticmethod
+    def push_update(task_id):
         channel_layer = get_channel_layer()
-        task_id = self.task.request.id
         async_to_sync(channel_layer.group_send)(
             task_id,
             {'type': 'update_task_progress', 'data': {**Progress(task_id).get_info()}}
         )
 
+    def set_progress(self, current, total):
+        super().set_progress(current, total)
+        self.push_update(self.task.request.id)
+
     def stop_task(self, current, total, exc):
         super().stop_task(current, total, exc)
-        channel_layer = get_channel_layer()
-        task_id = self.task.request.id
-        async_to_sync(channel_layer.group_send)(
-            task_id,
-            {'type': 'update_task_progress', 'data': {**Progress(task_id).get_info()}}
-        )
+        self.push_update(self.task.request.id)
 
 
 class Progress(object):
