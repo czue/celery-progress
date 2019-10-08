@@ -25,7 +25,7 @@ class ProgressRecorder(AbtractProgressRecorder):
     def __init__(self, task):
         self.task = task
 
-    def set_progress(self, current, total):
+    def set_progress(self, current, total, description=""):
         percent = 0
         if total > 0:
             percent = (Decimal(current) / Decimal(total)) * Decimal(100)
@@ -36,6 +36,7 @@ class ProgressRecorder(AbtractProgressRecorder):
                 'current': current,
                 'total': total,
                 'percent': percent,
+                'description': description
             }
         )
 
