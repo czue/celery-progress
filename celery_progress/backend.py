@@ -33,7 +33,7 @@ class ProgressRecorder(AbstractProgressRecorder):
     def __init__(self, task):
         self.task = task
 
-    def set_progress(self, current, total):
+    def set_progress(self, current, total, description=""):
         percent = 0
         if total > 0:
             percent = (Decimal(current) / Decimal(total)) * Decimal(100)
@@ -44,6 +44,7 @@ class ProgressRecorder(AbstractProgressRecorder):
                 'current': current,
                 'total': total,
                 'percent': percent,
+                'description': description
             }
         )
 
@@ -75,8 +76,8 @@ class WebSocketProgressRecorder(ProgressRecorder):
             {'type': 'update_task_progress', 'data': {**Progress(task_id).get_info()}}
         )
 
-    def set_progress(self, current, total):
-        super().set_progress(current, total)
+    def set_progress(self, current, total, description=""):
+        super().set_progress(current, total, description)
         self.push_update(self.task.request.id)
 
     def stop_task(self, current, total, exc):
