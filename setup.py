@@ -39,4 +39,9 @@ setup(
         'Topic :: Internet :: WWW/HTTP',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
     ],
+    extras_require={
+        'websockets': ['channels'],
+        'redis': ['channels_redis'],
+        'rabbitmq': ['channels_rabbitmq']
+    }
 )

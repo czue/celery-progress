@@ -8,7 +8,6 @@ from celery_progress.backend import Progress
 @task_postrun.connect
 def task_postrun_handler(task_id, **kwargs):
     """Runs after a task has finished. This will be used to push a websocket update for completed events."""
-    print(task_id)
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(
         task_id,

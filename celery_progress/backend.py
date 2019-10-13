@@ -1,9 +1,15 @@
 from abc import ABCMeta, abstractmethod
 from decimal import Decimal
 
-from asgiref.sync import async_to_sync
 from celery.result import AsyncResult
-from channels.layers import get_channel_layer
+
+try:
+    from asgiref.sync import async_to_sync
+    from channels.layers import get_channel_layer
+except ImportError:
+    _use_ws = False
+else:
+    _use_ws = True
 
 PROGRESS_STATE = 'PROGRESS'
 
@@ -55,6 +61,11 @@ class ProgressRecorder(AbstractProgressRecorder):
 
 
 class WebSocketProgressRecorder(ProgressRecorder):
+
+    def __init__(self, *args, **kwargs):
+        super(WebSocketProgressRecorder, self).__init__(*args, **kwargs)
+        if not _use_ws:
+            raise NotImplementedError('You must install the channels package to use websockets!')
 
     @staticmethod
     def push_update(task_id):
