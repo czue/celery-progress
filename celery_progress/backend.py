@@ -63,18 +63,14 @@ class ProgressRecorder(AbstractProgressRecorder):
 
 class WebSocketProgressRecorder(ProgressRecorder):
 
-    def __init__(self, *args, **kwargs):
-        super(WebSocketProgressRecorder, self).__init__(*args, **kwargs)
-        if not _use_ws:
-            raise NotImplementedError('You must install the channels package to use websockets!')
-
     @staticmethod
     def push_update(task_id):
-        channel_layer = get_channel_layer()
-        async_to_sync(channel_layer.group_send)(
-            task_id,
-            {'type': 'update_task_progress', 'data': {**Progress(task_id).get_info()}}
-        )
+        if _use_ws:
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                task_id,
+                {'type': 'update_task_progress', 'data': {**Progress(task_id).get_info()}}
+            )
 
     def set_progress(self, current, total, description=""):
         super().set_progress(current, total, description)
