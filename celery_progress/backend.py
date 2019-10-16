@@ -7,9 +7,10 @@ try:
     from asgiref.sync import async_to_sync
     from channels.layers import get_channel_layer
 except ImportError:
+    async_to_sync = get_channel_layer = None
     _use_ws = False
 else:
-    _use_ws = True
+    _use_ws = get_channel_layer()
 
 PROGRESS_STATE = 'PROGRESS'
 
@@ -66,11 +67,14 @@ class WebSocketProgressRecorder(ProgressRecorder):
     @staticmethod
     def push_update(task_id):
         if _use_ws:
-            channel_layer = get_channel_layer()
-            async_to_sync(channel_layer.group_send)(
-                task_id,
-                {'type': 'update_task_progress', 'data': {**Progress(task_id).get_info()}}
-            )
+            try:
+                channel_layer = get_channel_layer()
+                async_to_sync(channel_layer.group_send)(
+                    task_id,
+                    {'type': 'update_task_progress', 'data': {**Progress(task_id).get_info()}}
+                )
+            except AttributeError:  # No channel layer to send to, so ignore it
+                pass
 
     def set_progress(self, current, total, description=""):
         super().set_progress(current, total, description)
