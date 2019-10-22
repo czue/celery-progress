@@ -9,9 +9,9 @@ try:
     from channels.layers import get_channel_layer
 except ImportError:
     async_to_sync = get_channel_layer = None
-    _use_ws = False
+    WEBSOCKETS_AVAILABLE = False
 else:
-    _use_ws = get_channel_layer()
+    WEBSOCKETS_AVAILABLE = get_channel_layer()
 
 PROGRESS_STATE = 'PROGRESS'
 
@@ -70,7 +70,7 @@ class WebSocketProgressRecorder(ProgressRecorder):
 
     @staticmethod
     def push_update(task_id):
-        if _use_ws:
+        if WEBSOCKETS_AVAILABLE:
             try:
                 channel_layer = get_channel_layer()
                 async_to_sync(channel_layer.group_send)(
