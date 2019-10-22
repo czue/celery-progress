@@ -1,3 +1,4 @@
+import logging
 from abc import ABCMeta, abstractmethod
 from decimal import Decimal
 
@@ -13,6 +14,9 @@ else:
     _use_ws = get_channel_layer()
 
 PROGRESS_STATE = 'PROGRESS'
+
+
+logger = logging.getLogger(__name__)
 
 
 class AbstractProgressRecorder(object):
@@ -75,6 +79,12 @@ class WebSocketProgressRecorder(ProgressRecorder):
                 )
             except AttributeError:  # No channel layer to send to, so ignore it
                 pass
+        else:
+            logger.info(
+                'Tried to use websocket progress bar, but dependencies were not installed / configured. '
+                'Use pip install celery-progres[websockets] and setup channels to enable this feature.'
+                'See: https://channels.readthedocs.io/en/latest/ for more details.'
+            )
 
     def set_progress(self, current, total, description=""):
         super().set_progress(current, total, description)
@@ -129,4 +139,3 @@ def _get_unknown_progress():
         'total': 100,
         'percent': 0,
     }
-
