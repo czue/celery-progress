@@ -82,7 +82,7 @@ class WebSocketProgressRecorder(ProgressRecorder):
         else:
             logger.info(
                 'Tried to use websocket progress bar, but dependencies were not installed / configured. '
-                'Use pip install celery-progres[websockets] and setup channels to enable this feature.'
+                'Use pip install celery-progress[websockets] and setup channels to enable this feature.'
                 'See: https://channels.readthedocs.io/en/latest/ for more details.'
             )
 
