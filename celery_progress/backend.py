@@ -1,3 +1,4 @@
+import logging
 from abc import ABCMeta, abstractmethod
 from decimal import Decimal
 
@@ -8,11 +9,14 @@ try:
     from channels.layers import get_channel_layer
 except ImportError:
     async_to_sync = get_channel_layer = None
-    _use_ws = False
+    WEBSOCKETS_AVAILABLE = False
 else:
-    _use_ws = get_channel_layer()
+    WEBSOCKETS_AVAILABLE = get_channel_layer()
 
 PROGRESS_STATE = 'PROGRESS'
+
+
+logger = logging.getLogger(__name__)
 
 
 class AbstractProgressRecorder(object):
@@ -66,7 +70,7 @@ class WebSocketProgressRecorder(ProgressRecorder):
 
     @staticmethod
     def push_update(task_id):
-        if _use_ws:
+        if WEBSOCKETS_AVAILABLE:
             try:
                 channel_layer = get_channel_layer()
                 async_to_sync(channel_layer.group_send)(
@@ -75,6 +79,12 @@ class WebSocketProgressRecorder(ProgressRecorder):
                 )
             except AttributeError:  # No channel layer to send to, so ignore it
                 pass
+        else:
+            logger.info(
+                'Tried to use websocket progress bar, but dependencies were not installed / configured. '
+                'Use pip install celery-progress[websockets] and setup channels to enable this feature.'
+                'See: https://channels.readthedocs.io/en/latest/ for more details.'
+            )
 
     def set_progress(self, current, total, description=""):
         super().set_progress(current, total, description)
@@ -129,4 +139,3 @@ def _get_unknown_progress():
         'total': 100,
         'percent': 0,
     }
-
