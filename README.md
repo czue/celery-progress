@@ -156,6 +156,7 @@ courtesy of [@EJH2](https://github.com/EJH2/).
 
 A working example project leveraging WebSockets is [available here](https://github.com/EJH2/cp_ws-example).
 
-To use WebSockets, install with `pip install celery-progress[websockets]`.
+To use WebSockets, install with `pip install celery-progress[websockets,redis]` or
+`pip install celery-progress[websockets,rabbitmq]` (depending on broker dependencies).
 
 See `WebSocketProgressRecorder` and `celery_progress_websockets.js` for details.
