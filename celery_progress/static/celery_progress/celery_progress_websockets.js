@@ -28,7 +28,8 @@ var CeleryWebSocketProgressBar = (function () {
         var resultElement = options.resultElement || document.getElementById(resultElementId);
         var onResult = options.onResult || onResultDefault;
 
-        var ProgressSocket = new WebSocket('ws://' + window.location.host + progressUrl);
+        var ProgressSocket = new WebSocket(location.protocol === 'https:' ? 'wss' : 'ws' + '://' +
+            window.location.host + progressUrl);
 
         ProgressSocket.onopen = function (event) {
             ProgressSocket.send(JSON.stringify({'type': 'check_task_completion'}));

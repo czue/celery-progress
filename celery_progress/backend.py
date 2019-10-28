@@ -2,7 +2,7 @@ import logging
 from abc import ABCMeta, abstractmethod
 from decimal import Decimal
 
-from celery.result import AsyncResult
+from celery.result import AsyncResult, allow_join_result
 
 try:
     from asgiref.sync import async_to_sync
@@ -104,12 +104,13 @@ class Progress(object):
     def get_info(self):
         if self.result.ready():
             success = self.result.successful()
-            return {
-                'complete': True,
-                'success': success,
-                'progress': _get_completed_progress(),
-                'result': self.result.get(self.task_id) if success else None,
-            }
+            with allow_join_result():
+                return {
+                    'complete': True,
+                    'success': success,
+                    'progress': _get_completed_progress(),
+                    'result': self.result.get(self.task_id) if success else None,
+                }
         elif self.result.state == PROGRESS_STATE:
             return {
                 'complete': False,
