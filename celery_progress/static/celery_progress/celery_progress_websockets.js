@@ -28,7 +28,7 @@ var CeleryWebSocketProgressBar = (function () {
         var resultElement = options.resultElement || document.getElementById(resultElementId);
         var onResult = options.onResult || onResultDefault;
 
-        var ProgressSocket = new WebSocket(location.protocol === 'https:' ? 'wss' : 'ws' + '://' +
+        var ProgressSocket = new WebSocket((location.protocol === 'https:' ? 'wss' : 'ws') + '://' +
             window.location.host + progressUrl);
 
         ProgressSocket.onopen = function (event) {
