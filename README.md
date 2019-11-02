@@ -146,7 +146,7 @@ The `initProgressBar` function takes an optional object of options. The followin
 | onProgress | function to call when progress is updated | CeleryProgressBar.onProgressDefault |
 | onSuccess | function to call when progress successfully completes | CeleryProgressBar.onSuccessDefault |
 | onError | function to call when progress completes with an error | CeleryProgressBar.onErrorDefault |
-| onResult | function to call when returned non emty result | CeleryProgressBar.onResultDefault |
+| onResult | function to call when returned non empty result | CeleryProgressBar.onResultDefault |
 
 
 # WebSocket Support
@@ -159,4 +159,4 @@ A working example project leveraging WebSockets is [available here](https://gith
 To use WebSockets, install with `pip install celery-progress[websockets,redis]` or
 `pip install celery-progress[websockets,rabbitmq]` (depending on broker dependencies).
 
-See `WebSocketProgressRecorder` and `celery_progress_websockets.js` for details.
+See `WebSocketProgressRecorder` and `websockets.js` for details.
