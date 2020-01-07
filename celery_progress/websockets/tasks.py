@@ -1,6 +1,6 @@
 from celery.signals import task_postrun
 
-from celery_progress.websockets.backend import WEBSOCKETS_AVAILABLE, WebSocketProgressRecorder
+from .backend import WEBSOCKETS_AVAILABLE, WebSocketProgressRecorder
 
 
 @task_postrun.connect
