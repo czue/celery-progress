@@ -7,8 +7,8 @@ var CeleryWebSocketProgressBar = (function () {
         CeleryProgressBar.onResultDefault(resultElement, result);
     }
 
-    function onErrorDefault(progressBarElement, progressBarMessageElement) {
-        CeleryProgressBar.onErrorDefault(progressBarElement, progressBarMessageElement);
+    function onErrorDefault(progressBarElement, progressBarMessageElement, excMessage) {
+        CeleryProgressBar.onErrorDefault(progressBarElement, progressBarMessageElement, excMessage);
     }
 
     function onProgressDefault(progressBarElement, progressBarMessageElement, progress) {
@@ -45,7 +45,7 @@ var CeleryWebSocketProgressBar = (function () {
                 if (data.success) {
                     onSuccess(progressBarElement, progressBarMessageElement);
                 } else {
-                    onError(progressBarElement, progressBarMessageElement);
+                    onError(progressBarElement, progressBarMessageElement, data.result);
                 }
                 if (data.result) {
                     onResult(resultElement, data.result);
