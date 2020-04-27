@@ -1,5 +1,5 @@
 var CeleryProgressBar = (function () {
-    function onSuccessDefault(progressBarElement, progressBarMessageElement) {
+    function onSuccessDefault(progressBarElement, progressBarMessageElement, result) {
         progressBarElement.style.backgroundColor = '#76ce60';
         progressBarMessageElement.innerHTML = "Success!";
     }
@@ -46,7 +46,7 @@ var CeleryProgressBar = (function () {
                     setTimeout(updateProgress, pollInterval, progressUrl, options);
                 } else {
                     if (data.success) {
-                        onSuccess(progressBarElement, progressBarMessageElement);
+                        onSuccess(progressBarElement, progressBarMessageElement, data.result);
                     } else {
                         onError(progressBarElement, progressBarMessageElement);
                     }
