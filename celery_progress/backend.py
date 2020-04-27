@@ -68,7 +68,7 @@ class Progress(object):
                     'complete': True,
                     'success': success,
                     'progress': _get_completed_progress(),
-                    'result': self.result.get(self.task_id) if success else None,
+                    'result': self.result.get(self.task_id) if success else str(self.result.info),
                 }
         elif self.result.state == PROGRESS_STATE:
             return {

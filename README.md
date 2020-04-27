@@ -47,6 +47,18 @@ def my_task(self, seconds):
     return result
 ```
 
+You can add an optional progress description like this:
+
+```python
+  progress_recorder.set_progress(i + 1, seconds, description='my progress description')
+```
+
+You can stop your task with an exception message like this:
+
+```python
+  progress_recorder.stop_task(i + 1, seconds, 'my exception message')
+```
+
 ### Displaying progress
 
 In the view where you call the task you need to get the task ID like so:
