@@ -23,7 +23,7 @@ First add `celery_progress` to your `INSTALLED_APPS` in `settings.py`.
 Then add the following url config to your main `urls.py`:
 
 ```python
-from django.urls import re_path
+from django.urls import re_path, include
 re_path(r'^celery-progress/', include('celery_progress.urls')),  # the endpoint is configurable
 ```
 
