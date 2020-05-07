@@ -11,14 +11,22 @@ class AbstractProgressRecorder(object):
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def set_progress(self, current, total):
+    def set_progress(self, current, total, description=""):
+        pass
+
+    @abstractmethod
+    def stop_task(self, current, total, exc):
         pass
 
 
 class ConsoleProgressRecorder(AbstractProgressRecorder):
 
-    def set_progress(self, current, total):
-        print('processed {} items of {}'.format(current, total))
+    def set_progress(self, current, total, description=""):
+        print('processed {} items of {}. {}'.format(current, total, description))
+
+
+    def stop_task(self, current, total, exc):
+        pass
 
 
 class ProgressRecorder(AbstractProgressRecorder):
