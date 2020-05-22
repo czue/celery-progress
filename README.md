@@ -10,6 +10,10 @@ Super simple setup. Lots of customization available.
 
 ## Installation
 
+If you haven't already, make sure you have properly [set up celery in your project](https://docs.celeryproject.org/en/stable/getting-started/first-steps-with-celery.html#first-steps).
+
+Then install this library:
+
 ```bash
 pip install celery-progress
 ```
