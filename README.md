@@ -8,6 +8,9 @@ Super simple setup. Lots of customization available.
 
 [Celery Progress Bar demo on Build With Django](https://buildwithdjango.com/projects/celery-progress/)
 
+### Github demo application: build a download progress bar for Django
+Starting with Celery can be challenging, [eeintech](https://github.com/eeintech) built a complete [Django demo application](https://github.com/eeintech/django-celery-progress-demo) along with a [step-by-step guide](https://eeinte.ch/stream/progress-bar-django-using-celery/) to get you started on building your own progress bar!
+
 ## Installation
 
 If you haven't already, make sure you have properly [set up celery in your project](https://docs.celeryproject.org/en/stable/getting-started/first-steps-with-celery.html#first-steps).
