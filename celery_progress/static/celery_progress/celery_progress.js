@@ -10,7 +10,11 @@ var CeleryProgressBar = (function () {
         }
     }
 
-    function onErrorDefault(progressBarElement, progressBarMessageElement, excMessage) {
+    /**
+     * Default handler for all errors.
+     * @param data - A Response object for HTTP errors, undefined for other errors
+     */
+    function onErrorDefault(progressBarElement, progressBarMessageElement, excMessage, data) {
         progressBarElement.style.backgroundColor = '#dc4f63';
         progressBarMessageElement.innerHTML = "Uh-Oh, something went wrong! " + excMessage;
     }
@@ -31,8 +35,10 @@ var CeleryProgressBar = (function () {
         var onProgress = options.onProgress || onProgressDefault;
         var onSuccess = options.onSuccess || onSuccessDefault;
         var onError = options.onError || onErrorDefault;
-        var onNetworkError = options.onNetworkError || onErrorDefault;
-        var onHttpError = options.onHttpError || onErrorDefault;
+        var onTaskError = options.onTaskError || onError;
+        var onNetworkError = options.onNetworkError || onError;
+        var onHttpError = options.onHttpError || onError;
+        var onDataError = options.onDataError || onError;
         var pollInterval = options.pollInterval || 500;
         var resultElementId = options.resultElementId || 'celery-result';
         var resultElement = options.resultElement || document.getElementById(resultElementId);
@@ -44,36 +50,41 @@ var CeleryProgressBar = (function () {
             response = await fetch(progressUrl);
         } catch (networkError) {
             onNetworkError(progressBarElement, progressBarMessageElement, "Network Error");
+            throw networkError;
         }
 
         if (response.status === 200) {
-            response.json().then(function(data) {
-                if (data.progress) {
-                    onProgress(progressBarElement, progressBarMessageElement, data.progress);
-                }
-                if (!data.complete) {
-                    setTimeout(updateProgress, pollInterval, progressUrl, options);
+            let data;
+            try {
+                data = await response.json();
+            } catch (parsingError) {
+                onDataError(progressBarElement, progressBarMessageElement, "Parsing Error")
+                throw parsingError;
+            }
+
+            if (data.progress) {
+                onProgress(progressBarElement, progressBarMessageElement, data.progress);
+            }
+            if (!data.complete) {
+                setTimeout(updateProgress, pollInterval, progressUrl, options);
+            } else {
+                if (data.success) {
+                    onSuccess(progressBarElement, progressBarMessageElement, data.result);
                 } else {
-                    if (data.success) {
-                        onSuccess(progressBarElement, progressBarMessageElement, data.result);
-                    } else {
-                        onError(progressBarElement, progressBarMessageElement, data.result);
-                    }
-                    if (data.result) {
-                        onResult(resultElement, data.result);
-                    }
+                    onTaskError(progressBarElement, progressBarMessageElement, data.result);
                 }
-            });
+                if (data.result) {
+                    onResult(resultElement, data.result);
+                }
+            }
         } else {
-            onHttpError(progressBarElement, progressBarMessageElement, "HTTP Code " + response.status);
+            onHttpError(progressBarElement, progressBarMessageElement, "HTTP Code " + response.status, response);
         }
     }
     return {
         onSuccessDefault: onSuccessDefault,
         onResultDefault: onResultDefault,
         onErrorDefault: onErrorDefault,
-        onNetworkError: onErrorDefault,
-        onHttpError: onErrorDefault,
         onProgressDefault: onProgressDefault,
         updateProgress: updateProgress,
         initProgressBar: updateProgress,  // just for api cleanliness
