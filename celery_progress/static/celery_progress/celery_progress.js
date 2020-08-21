@@ -1,25 +1,25 @@
 var CeleryProgressBar = (function () {
     function onSuccessDefault(progressBarElement, progressBarMessageElement, result) {
         progressBarElement.style.backgroundColor = '#76ce60';
-        progressBarMessageElement.innerHTML = "Success!";
+        progressBarMessageElement.textContent = "Success!";
     }
 
     function onResultDefault(resultElement, result) {
         if (resultElement) {
-            resultElement.innerHTML = result;
+            resultElement.textContent = result;
         }
     }
 
     function onErrorDefault(progressBarElement, progressBarMessageElement, excMessage) {
         progressBarElement.style.backgroundColor = '#dc4f63';
-        progressBarMessageElement.innerHTML = "Uh-Oh, something went wrong! " + excMessage;
+        progressBarMessageElement.textContent = "Uh-Oh, something went wrong! " + excMessage;
     }
 
     function onProgressDefault(progressBarElement, progressBarMessageElement, progress) {
         progressBarElement.style.backgroundColor = '#68a9ef';
         progressBarElement.style.width = progress.percent + "%";
         var description = progress.description || "";
-        progressBarMessageElement.innerHTML = progress.current + ' of ' + progress.total + ' processed. ' + description;
+        progressBarMessageElement.textContent = progress.current + ' of ' + progress.total + ' processed. ' + description;
     }
 
     function updateProgress (progressUrl, options) {
