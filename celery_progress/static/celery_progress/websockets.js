@@ -48,7 +48,7 @@ var CeleryWebSocketProgressBar = (function () {
                 } else {
                     onTaskError(progressBarElement, progressBarMessageElement, data.result);
                 }
-                if (data.result) {
+                if (data.hasOwnProperty('result')) {
                     onResult(resultElement, data.result);
                 }
                 ProgressSocket.close();

@@ -75,7 +75,7 @@ var CeleryProgressBar = (function () {
                 } else {
                     onDataError(progressBarElement, progressBarMessageElement, "Data Error");
                 }
-                if (data.result) {
+                if (data.hasOwnProperty('result')) {
                     onResult(resultElement, data.result);
                 }
             }
