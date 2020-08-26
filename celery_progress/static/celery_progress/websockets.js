@@ -7,8 +7,8 @@ var CeleryWebSocketProgressBar = (function () {
         CeleryProgressBar.onResultDefault(resultElement, result);
     }
 
-    function onErrorDefault(progressBarElement, progressBarMessageElement, excMessage) {
-        CeleryProgressBar.onErrorDefault(progressBarElement, progressBarMessageElement, excMessage);
+    function onErrorDefault(progressBarElement, progressBarMessageElement, excMessage, data) {
+        CeleryProgressBar.onErrorDefault(progressBarElement, progressBarMessageElement, excMessage, data);
     }
 
     function onProgressDefault(progressBarElement, progressBarMessageElement, progress) {
@@ -24,6 +24,7 @@ var CeleryWebSocketProgressBar = (function () {
         var onProgress = options.onProgress || onProgressDefault;
         var onSuccess = options.onSuccess || onSuccessDefault;
         var onError = options.onError || onErrorDefault;
+        var onTaskError = options.onTaskError || onError;
         var resultElementId = options.resultElementId || 'celery-result';
         var resultElement = options.resultElement || document.getElementById(resultElementId);
         var onResult = options.onResult || onResultDefault;
@@ -45,9 +46,9 @@ var CeleryWebSocketProgressBar = (function () {
                 if (data.success) {
                     onSuccess(progressBarElement, progressBarMessageElement, data.result);
                 } else {
-                    onError(progressBarElement, progressBarMessageElement, data.result);
+                    onTaskError(progressBarElement, progressBarMessageElement, data.result);
                 }
-                if (data.result) {
+                if (data.hasOwnProperty('result')) {
                     onResult(resultElement, data.result);
                 }
                 ProgressSocket.close();
