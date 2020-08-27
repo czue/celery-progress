@@ -16,6 +16,7 @@ var CeleryProgressBar = (function () {
      */
     function onErrorDefault(progressBarElement, progressBarMessageElement, excMessage, data) {
         progressBarElement.style.backgroundColor = '#dc4f63';
+        excMessage = excMessage || '';
         progressBarMessageElement.textContent = "Uh-Oh, something went wrong! " + excMessage;
     }
 
