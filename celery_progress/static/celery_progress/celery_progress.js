@@ -24,7 +24,11 @@ var CeleryProgressBar = (function () {
         progressBarElement.style.backgroundColor = '#68a9ef';
         progressBarElement.style.width = progress.percent + "%";
         var description = progress.description || "";
-        progressBarMessageElement.textContent = progress.current + ' of ' + progress.total + ' processed. ' + description;
+        if (progress.current == 0 && progress.pending) {
+          progressBarMessageElement.textContent = 'Waiting for task to start...'
+        } else {
+          progressBarMessageElement.textContent = progress.current + ' of ' + progress.total + ' processed. ' + description;
+        }
     }
 
     async function updateProgress (progressUrl, options) {
