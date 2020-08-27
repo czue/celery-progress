@@ -16,6 +16,7 @@ var CeleryProgressBar = (function () {
      */
     function onErrorDefault(progressBarElement, progressBarMessageElement, excMessage, data) {
         progressBarElement.style.backgroundColor = '#dc4f63';
+        excMessage = excMessage || '';
         progressBarMessageElement.textContent = "Uh-Oh, something went wrong! " + excMessage;
     }
 
@@ -45,6 +46,13 @@ var CeleryProgressBar = (function () {
         var onResult = options.onResult || onResultDefault;
 
 
+        const getMessageDetails = function (result) {
+            if (resultElement) {
+                return ''
+            } else {
+                return result || '';
+            }
+        };
         let response;
         try {
             response = await fetch(progressUrl);
@@ -69,9 +77,9 @@ var CeleryProgressBar = (function () {
                 setTimeout(updateProgress, pollInterval, progressUrl, options);
             } else {
                 if (data.success === true) {
-                    onSuccess(progressBarElement, progressBarMessageElement, data.result);
+                    onSuccess(progressBarElement, progressBarMessageElement, getMessageDetails(data.result));
                 } else if (data.success === false) {
-                    onTaskError(progressBarElement, progressBarMessageElement, data.result);
+                    onTaskError(progressBarElement, progressBarMessageElement, getMessageDetails(data.result));
                 } else {
                     onDataError(progressBarElement, progressBarMessageElement, "Data Error");
                 }
