@@ -169,7 +169,7 @@ The `initProgressBar` function takes an optional object of options. The followin
 | onTaskError | function to call when progress completes with an error | onError |
 | onNetworkError | function to call on a network error (ignored by WebSocket) | onError |
 | onHttpError | function to call on a non-200 response (ignored by WebSocket) | onError |
-| onDataError | function to call on a 200 response that's not JSON or has invalid schema due to a programming error (ignored by WebSocket) | onError |
+| onDataError | function to call on a response that's not JSON or has invalid schema due to a programming error | onError |
 | onResult | function to call when returned non empty result | CeleryProgressBar.onResultDefault |
 
 
