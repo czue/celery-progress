@@ -23,7 +23,7 @@ class CeleryProgressBar {
 
     static onSuccessDefault(progressBarElement, progressBarMessageElement, result) {
         progressBarElement.style.backgroundColor = '#76ce60';
-        progressBarMessageElement.textContent = "Success!";
+        progressBarMessageElement.textContent = "Success! " + result;
     }
 
     static onResultDefault(resultElement, result) {
