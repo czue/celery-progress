@@ -53,27 +53,27 @@ class CeleryProgressBar {
         }
     }
 
+    getMessageDetails(result) {
+        if (this.resultElement) {
+            return ''
+        } else {
+            return result || '';
+        }
+    }
+
     /**
      * Process update message data.
      * @return true if the task is complete, false if it's not, undefined if `data` is invalid
      */
     onData(data) {
-        const getMessageDetails = function (result) {
-            if (this.resultElement) {
-                return ''
-            } else {
-                return result || '';
-            }
-        };
-
         if (data.progress) {
             this.onProgress(this.progressBarElement, this.progressBarMessageElement, data.progress);
         }
         if (data.complete === true) {
             if (data.success === true) {
-                this.onSuccess(this.progressBarElement, this.progressBarMessageElement, getMessageDetails(data.result));
+                this.onSuccess(this.progressBarElement, this.progressBarMessageElement, this.getMessageDetails(data.result));
             } else if (data.success === false) {
-                this.onTaskError(this.progressBarElement, this.progressBarMessageElement, getMessageDetails(data.result));
+                this.onTaskError(this.progressBarElement, this.progressBarMessageElement, this.getMessageDetails(data.result));
             } else {
                 this.onDataError(this.progressBarElement, this.progressBarMessageElement, "Data Error");
             }
