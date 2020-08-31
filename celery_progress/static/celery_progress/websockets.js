@@ -42,7 +42,13 @@ var CeleryWebSocketProgressBar = (function () {
         };
 
         ProgressSocket.onmessage = function (event) {
-            var data = JSON.parse(event.data);
+            let data;
+            try {
+                data = JSON.parse(event.data);
+            } catch (parsingError) {
+                onDataError(progressBarElement, progressBarMessageElement, "Parsing Error")
+                throw parsingError;
+            }
 
             const done = onData(data, onProgress, onSuccess, onTaskError, onDataError, onResult, progressBarElement, progressBarMessageElement, resultElement);
 
