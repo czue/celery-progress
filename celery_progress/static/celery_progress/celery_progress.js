@@ -31,6 +31,41 @@ var CeleryProgressBar = (function () {
         }
     }
 
+    /**
+     * Process update message data.
+     * @return true if the task is complete, false if it's not, undefined if `data` is invalid
+     */
+    function onData(data, onProgress, onSuccess, onTaskError, onDataError, onResult, progressBarElement, progressBarMessageElement, resultElement) {
+        let done = undefined;
+
+        const getMessageDetails = function (result) {
+            if (resultElement) {
+                return ''
+            } else {
+                return result || '';
+            }
+        };
+
+        if (data.progress) {
+            onProgress(progressBarElement, progressBarMessageElement, data.progress);
+        }
+        if (data.complete === false) {
+            done = false;
+        } else {
+            if (data.success === true) {
+                onSuccess(progressBarElement, progressBarMessageElement, getMessageDetails(data.result));
+            } else if (data.success === false) {
+                onTaskError(progressBarElement, progressBarMessageElement, getMessageDetails(data.result));
+            } else {
+                onDataError(progressBarElement, progressBarMessageElement, "Data Error");
+            }
+            if (data.hasOwnProperty('result')) {
+                onResult(resultElement, data.result);
+            }
+        }
+        return data.complete;
+    }
+
     async function updateProgress (progressUrl, options) {
         options = options || {};
         var progressBarId = options.progressBarId || 'progress-bar';
@@ -50,13 +85,6 @@ var CeleryProgressBar = (function () {
         var onResult = options.onResult || onResultDefault;
 
 
-        const getMessageDetails = function (result) {
-            if (resultElement) {
-                return ''
-            } else {
-                return result || '';
-            }
-        };
         let response;
         try {
             response = await fetch(progressUrl);
@@ -74,22 +102,10 @@ var CeleryProgressBar = (function () {
                 throw parsingError;
             }
 
-            if (data.progress) {
-                onProgress(progressBarElement, progressBarMessageElement, data.progress);
-            }
-            if (data.complete === false) {
+            const done = onData(data, onProgress, onSuccess, onTaskError, onDataError, onResult, progressBarElement, progressBarMessageElement, resultElement);
+
+            if (done === false) {
                 setTimeout(updateProgress, pollInterval, progressUrl, options);
-            } else {
-                if (data.success === true) {
-                    onSuccess(progressBarElement, progressBarMessageElement, getMessageDetails(data.result));
-                } else if (data.success === false) {
-                    onTaskError(progressBarElement, progressBarMessageElement, getMessageDetails(data.result));
-                } else {
-                    onDataError(progressBarElement, progressBarMessageElement, "Data Error");
-                }
-                if (data.hasOwnProperty('result')) {
-                    onResult(resultElement, data.result);
-                }
             }
         } else {
             onHttpError(progressBarElement, progressBarMessageElement, "HTTP Code " + response.status, response);

@@ -15,6 +15,10 @@ var CeleryWebSocketProgressBar = (function () {
         CeleryProgressBar.onProgressDefault(progressBarElement, progressBarMessageElement, progress);
     }
 
+    function onData(data, onProgress, onSuccess, onTaskError, onDataError, onResult, progressBarElement, progressBarMessageElement, resultElement) {
+        return CeleryProgressBar.onData(data, onProgress, onSuccess, onTaskError, onDataError, onResult, progressBarElement, progressBarMessageElement, resultElement);
+    }
+
     function initProgress (progressUrl, options) {
         options = options || {};
         var progressBarId = options.progressBarId || 'progress-bar';
@@ -24,6 +28,7 @@ var CeleryWebSocketProgressBar = (function () {
         var onProgress = options.onProgress || onProgressDefault;
         var onSuccess = options.onSuccess || onSuccessDefault;
         var onError = options.onError || onErrorDefault;
+        var onDataError = options.onDataError || onError;
         var onTaskError = options.onTaskError || onError;
         var resultElementId = options.resultElementId || 'celery-result';
         var resultElement = options.resultElement || document.getElementById(resultElementId);
@@ -39,18 +44,9 @@ var CeleryWebSocketProgressBar = (function () {
         ProgressSocket.onmessage = function (event) {
             var data = JSON.parse(event.data);
 
-            if (data.progress) {
-                onProgress(progressBarElement, progressBarMessageElement, data.progress);
-            }
-            if (data.complete) {
-                if (data.success) {
-                    onSuccess(progressBarElement, progressBarMessageElement, data.result);
-                } else {
-                    onTaskError(progressBarElement, progressBarMessageElement, data.result);
-                }
-                if (data.hasOwnProperty('result')) {
-                    onResult(resultElement, data.result);
-                }
+            const done = onData(data, onProgress, onSuccess, onTaskError, onDataError, onResult, progressBarElement, progressBarMessageElement, resultElement);
+
+            if (done === true || done === undefined) {
                 ProgressSocket.close();
             }
         }
