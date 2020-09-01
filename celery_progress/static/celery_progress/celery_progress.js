@@ -80,6 +80,8 @@ class CeleryProgressBar {
             if (data.hasOwnProperty('result')) {
                 this.onResult(this.resultElement, data.result);
             }
+        } else if (data.complete === undefined) {
+            this.onDataError(this.progressBarElement, this.progressBarMessageElement, "Data Error");
         }
         return data.complete;
     }
