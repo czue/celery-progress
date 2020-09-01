@@ -66,24 +66,28 @@ class CeleryProgressBar {
      * @return true if the task is complete, false if it's not, undefined if `data` is invalid
      */
     onData(data) {
+        let done = false;
         if (data.progress) {
             this.onProgress(this.progressBarElement, this.progressBarMessageElement, data.progress);
         }
         if (data.complete === true) {
+            done = true;
             if (data.success === true) {
                 this.onSuccess(this.progressBarElement, this.progressBarMessageElement, this.getMessageDetails(data.result));
             } else if (data.success === false) {
                 this.onTaskError(this.progressBarElement, this.progressBarMessageElement, this.getMessageDetails(data.result));
             } else {
+                done = undefined;
                 this.onDataError(this.progressBarElement, this.progressBarMessageElement, "Data Error");
             }
             if (data.hasOwnProperty('result')) {
                 this.onResult(this.resultElement, data.result);
             }
         } else if (data.complete === undefined) {
+            done = undefined;
             this.onDataError(this.progressBarElement, this.progressBarMessageElement, "Data Error");
         }
-        return data.complete;
+        return done;
     }
 
     async connect() {
