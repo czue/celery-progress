@@ -46,10 +46,14 @@ class CeleryProgressBar {
         progressBarElement.style.backgroundColor = '#68a9ef';
         progressBarElement.style.width = progress.percent + "%";
         var description = progress.description || "";
-        if (progress.current == 0 && progress.pending) {
-          progressBarMessageElement.textContent = 'Waiting for task to start...'
+        if (progress.current == 0) {
+            if (progress.pending === true) {
+                progressBarMessageElement.textContent = 'Waiting for task to start...';
+            } else {
+                progressBarMessageElement.textContent = 'Task started...';
+            }
         } else {
-          progressBarMessageElement.textContent = progress.current + ' of ' + progress.total + ' processed. ' + description;
+            progressBarMessageElement.textContent = progress.current + ' of ' + progress.total + ' processed. ' + description;
         }
     }
 
