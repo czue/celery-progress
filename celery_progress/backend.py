@@ -42,6 +42,7 @@ class ProgressRecorder(AbstractProgressRecorder):
         self.task.update_state(
             state=PROGRESS_STATE,
             meta={
+                'pending': False,
                 'current': current,
                 'total': total,
                 'percent': percent,
@@ -53,6 +54,7 @@ class ProgressRecorder(AbstractProgressRecorder):
         self.task.update_state(
             state='FAILURE',
             meta={
+                'pending': False,
                 'current': current,
                 'total': total,
                 'percent': 100.0,
@@ -88,22 +90,23 @@ class Progress(object):
             return {
                 'complete': False,
                 'success': None,
-                'progress': _get_unknown_progress(),
+                'progress': _get_unknown_progress(self.result.state),
             }
         return self.result.info
 
 
 def _get_completed_progress():
     return {
+        'pending': False,
         'current': 100,
         'total': 100,
         'percent': 100,
     }
 
 
-def _get_unknown_progress():
+def _get_unknown_progress(state):
     return {
-        'pending': True,
+        'pending': state == 'PENDING',
         'current': 0,
         'total': 100,
         'percent': 0,
