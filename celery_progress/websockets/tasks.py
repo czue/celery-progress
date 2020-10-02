@@ -14,4 +14,4 @@ def task_postrun_handler(task_id, **kwargs):
         'progress': {'pending': False, 'current': 100, 'total': 100, 'percent': 100},
         'result': str(kwargs.pop('retval'))
     }
-    WebSocketProgressRecorder.push_update(task_id, data=data)
+    WebSocketProgressRecorder.push_update(task_id, data=data, final=True)

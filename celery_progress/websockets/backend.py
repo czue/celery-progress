@@ -19,7 +19,7 @@ if not channel_layer:
 class WebSocketProgressRecorder(ProgressRecorder):
 
     @staticmethod
-    def push_update(task_id, data):
+    def push_update(task_id, data, final=False):
         try:
             async_to_sync(channel_layer.group_send)(
                 task_id,
@@ -27,6 +27,9 @@ class WebSocketProgressRecorder(ProgressRecorder):
             )
         except AttributeError:  # No channel layer to send to, so ignore it
             pass
+        except RuntimeError as e:  # We're sending messages too fast for asgiref to handle, drop it
+            if final and channel_layer:  # Send error back to post-run handler for a retry
+                raise e
 
     def set_progress(self, current, total, description=""):
         progress = super().set_progress(current, total, description)
