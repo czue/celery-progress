@@ -1,4 +1,4 @@
-from celery_progress.backend import ProgressRecorder, Progress
+from celery_progress.backend import ProgressRecorder
 
 try:
     from asgiref.sync import async_to_sync
@@ -19,19 +19,23 @@ if not channel_layer:
 class WebSocketProgressRecorder(ProgressRecorder):
 
     @staticmethod
-    def push_update(task_id):
+    def push_update(task_id, data):
         try:
             async_to_sync(channel_layer.group_send)(
                 task_id,
-                {'type': 'update_task_progress', 'data': {**Progress(task_id).get_info()}}
+                {'type': 'update_task_progress', 'data': data}
             )
         except AttributeError:  # No channel layer to send to, so ignore it
             pass
 
     def set_progress(self, current, total, description=""):
-        super().set_progress(current, total, description)
-        self.push_update(self.task.request.id)
+        progress = super().set_progress(current, total, description)
+        data = {'complete': False, 'success': None, 'progress': progress}
+        self.push_update(self.task.request.id, data)
 
     def stop_task(self, current, total, exc):
-        super().stop_task(current, total, exc)
-        self.push_update(self.task.request.id)
+        progress = super().stop_task(current, total, exc)
+        progress.pop('exc_type')
+        result = progress.pop('exc_message')
+        data = {'complete': True, 'success': False, 'progress': progress, 'result': result}
+        self.push_update(self.task.request.id, data)

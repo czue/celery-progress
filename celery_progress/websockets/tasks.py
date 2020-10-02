@@ -1,12 +1,17 @@
 from celery.signals import task_postrun
 
-from .backend import channel_layer, WebSocketProgressRecorder
+from .backend import WebSocketProgressRecorder
 
 
-@task_postrun.connect
+@task_postrun.connect(retry=True)
 def task_postrun_handler(task_id, **kwargs):
     """Runs after a task has finished. This will be used to push a websocket update for completed events.
 
-    If the websockets version of this package is not installed, this will do nothing."""
-    if channel_layer:
-        WebSocketProgressRecorder.push_update(task_id)
+    If the websockets version of this package is not installed, this will fail silently."""
+    data = {
+        'complete': True,
+        'success': kwargs.pop('state') == 'SUCCESS',
+        'progress': {'pending': False, 'current': 100, 'total': 100, 'percent': 100},
+        'result': kwargs.pop('retval')
+    }
+    WebSocketProgressRecorder.push_update(task_id, data=data)
