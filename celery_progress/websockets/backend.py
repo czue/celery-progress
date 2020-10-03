@@ -1,3 +1,5 @@
+import logging
+
 from celery_progress.backend import ProgressRecorder
 
 try:
@@ -8,15 +10,20 @@ except ImportError:
 else:
     channel_layer = get_channel_layer()
 
-if not channel_layer:
-    RuntimeError(
-        'Tried to use websocket progress bar, but dependencies were not installed / configured. '
-        'Use pip install celery-progress[websockets] and set up channels to enable this feature. '
-        'See: https://channels.readthedocs.io/en/latest/ for more details.'
-    )
+logger = logging.getLogger(__name__)
 
 
 class WebSocketProgressRecorder(ProgressRecorder):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if not channel_layer:
+            logger.warning(
+                'Tried to use websocket progress bar, but dependencies were not installed / configured. '
+                'Use pip install celery-progress[websockets] and set up channels to enable this feature. '
+                'See: https://channels.readthedocs.io/en/latest/ for more details.'
+            )
 
     @staticmethod
     def push_update(task_id, data, final=False):
