@@ -1,45 +1,51 @@
 import logging
 
-from celery.result import AsyncResult
-from celery_progress.backend import ProgressRecorder, Progress
+from celery_progress.backend import ProgressRecorder
 
 try:
     from asgiref.sync import async_to_sync
     from channels.layers import get_channel_layer
 except ImportError:
-    async_to_sync = get_channel_layer = None
-    WEBSOCKETS_AVAILABLE = False
+    channel_layer = None
 else:
-    WEBSOCKETS_AVAILABLE = get_channel_layer()
-
+    channel_layer = get_channel_layer()
 
 logger = logging.getLogger(__name__)
 
 
 class WebSocketProgressRecorder(ProgressRecorder):
 
-    @staticmethod
-    def push_update(task_id):
-        if WEBSOCKETS_AVAILABLE:
-            try:
-                channel_layer = get_channel_layer()
-                async_to_sync(channel_layer.group_send)(
-                    task_id,
-                    {'type': 'update_task_progress', 'data': {**Progress(AsyncResult(task_id)).get_info()}}
-                )
-            except AttributeError:  # No channel layer to send to, so ignore it
-                pass
-        else:
-            logger.info(
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if not channel_layer:
+            logger.warning(
                 'Tried to use websocket progress bar, but dependencies were not installed / configured. '
-                'Use pip install celery-progress[websockets] and setup channels to enable this feature.'
+                'Use pip install celery-progress[websockets] and set up channels to enable this feature. '
                 'See: https://channels.readthedocs.io/en/latest/ for more details.'
             )
 
+    @staticmethod
+    def push_update(task_id, data, final=False):
+        try:
+            async_to_sync(channel_layer.group_send)(
+                task_id,
+                {'type': 'update_task_progress', 'data': data}
+            )
+        except AttributeError:  # No channel layer to send to, so ignore it
+            pass
+        except RuntimeError as e:  # We're sending messages too fast for asgiref to handle, drop it
+            if final and channel_layer:  # Send error back to post-run handler for a retry
+                raise e
+
     def set_progress(self, current, total, description=""):
-        super().set_progress(current, total, description)
-        self.push_update(self.task.request.id)
+        progress = super().set_progress(current, total, description)
+        data = {'complete': False, 'success': None, 'progress': progress}
+        self.push_update(self.task.request.id, data)
 
     def stop_task(self, current, total, exc):
-        super().stop_task(current, total, exc)
-        self.push_update(self.task.request.id)
+        progress = super().stop_task(current, total, exc)
+        progress.pop('exc_type')
+        result = progress.pop('exc_message')
+        data = {'complete': True, 'success': False, 'progress': progress, 'result': result}
+        self.push_update(self.task.request.id, data)

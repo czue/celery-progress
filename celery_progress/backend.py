@@ -25,7 +25,6 @@ class ConsoleProgressRecorder(AbstractProgressRecorder):
     def set_progress(self, current, total, description=""):
         print('processed {} items of {}. {}'.format(current, total, description))
 
-
     def stop_task(self, current, total, exc):
         pass
 
@@ -40,27 +39,33 @@ class ProgressRecorder(AbstractProgressRecorder):
         if total > 0:
             percent = (Decimal(current) / Decimal(total)) * Decimal(100)
             percent = float(round(percent, 2))
+        meta = {
+            'pending': False,
+            'current': current,
+            'total': total,
+            'percent': percent,
+            'description': description
+        }
         self.task.update_state(
             state=PROGRESS_STATE,
-            meta={
-                'current': current,
-                'total': total,
-                'percent': percent,
-                'description': description
-            }
+            meta=meta
         )
+        return meta
 
     def stop_task(self, current, total, exc):
+        meta = {
+            'pending': False,
+            'current': current,
+            'total': total,
+            'percent': 100.0,
+            'exc_message': str(exc),
+            'exc_type': str(type(exc))
+        }
         self.task.update_state(
             state='FAILURE',
-            meta={
-                'current': current,
-                'total': total,
-                'percent': 100.0,
-                'exc_message': str(exc),
-                'exc_type': str(type(exc))
-            }
+            meta=meta
         )
+        return meta
 
 
 class Progress(object):
@@ -92,7 +97,7 @@ class Progress(object):
             return {
                 'complete': False,
                 'success': None,
-                'progress': _get_unknown_progress(),
+                'progress': _get_unknown_progress(self.result.state),
             }
         return self.result.info
 
@@ -118,15 +123,16 @@ class KnownResult(EagerResult):
 
 def _get_completed_progress():
     return {
+        'pending': False,
         'current': 100,
         'total': 100,
         'percent': 100,
     }
 
 
-def _get_unknown_progress():
+def _get_unknown_progress(state):
     return {
-        'pending': True,
+        'pending': state == 'PENDING',
         'current': 0,
         'total': 100,
         'percent': 0,
