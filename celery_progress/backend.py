@@ -39,6 +39,7 @@ class ProgressRecorder(AbstractProgressRecorder):
         if total > 0:
             percent = (Decimal(current) / Decimal(total)) * Decimal(100)
             percent = float(round(percent, 2))
+        state = PROGRESS_STATE
         meta = {
             'pending': False,
             'current': current,
@@ -47,12 +48,13 @@ class ProgressRecorder(AbstractProgressRecorder):
             'description': description
         }
         self.task.update_state(
-            state=PROGRESS_STATE,
+            state=state,
             meta=meta
         )
-        return meta
+        return state, meta
 
     def stop_task(self, current, total, exc):
+        state = 'FAILURE'
         meta = {
             'pending': False,
             'current': current,
@@ -62,10 +64,10 @@ class ProgressRecorder(AbstractProgressRecorder):
             'exc_type': str(type(exc))
         }
         self.task.update_state(
-            state='FAILURE',
+            state=state,
             meta=meta
         )
-        return meta
+        return state, meta
 
 
 class Progress(object):
