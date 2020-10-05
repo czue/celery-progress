@@ -24,7 +24,6 @@ class ConsoleProgressRecorder(AbstractProgressRecorder):
     def set_progress(self, current, total, description=""):
         print('processed {} items of {}. {}'.format(current, total, description))
 
-
     def stop_task(self, current, total, exc):
         pass
 
@@ -39,29 +38,33 @@ class ProgressRecorder(AbstractProgressRecorder):
         if total > 0:
             percent = (Decimal(current) / Decimal(total)) * Decimal(100)
             percent = float(round(percent, 2))
+        meta = {
+            'pending': False,
+            'current': current,
+            'total': total,
+            'percent': percent,
+            'description': description
+        }
         self.task.update_state(
             state=PROGRESS_STATE,
-            meta={
-                'pending': False,
-                'current': current,
-                'total': total,
-                'percent': percent,
-                'description': description
-            }
+            meta=meta
         )
+        return meta
 
     def stop_task(self, current, total, exc):
+        meta = {
+            'pending': False,
+            'current': current,
+            'total': total,
+            'percent': 100.0,
+            'exc_message': str(exc),
+            'exc_type': str(type(exc))
+        }
         self.task.update_state(
             state='FAILURE',
-            meta={
-                'pending': False,
-                'current': current,
-                'total': total,
-                'percent': 100.0,
-                'exc_message': str(exc),
-                'exc_type': str(type(exc))
-            }
+            meta=meta
         )
+        return meta
 
 
 class Progress(object):
