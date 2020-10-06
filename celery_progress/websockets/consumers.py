@@ -31,7 +31,7 @@ class ProgressConsumer(AsyncWebsocketConsumer):
                 self.task_id,
                 {
                     'type': 'update_task_progress',
-                    'data': Progress(self.task_id).get_info()
+                    'data': Progress(AsyncResult(self.task_id)).get_info()
                 }
             )
 
