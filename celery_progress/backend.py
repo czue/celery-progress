@@ -101,7 +101,13 @@ class Progress(object):
                 'success': None,
                 'progress': _get_unknown_progress(self.result.state),
             }
-        return self.result.info
+        else:
+            return {
+                'complete': True,
+                'success': False,
+                'progress': _get_unknown_progress(self.result.state),
+                'result': f'Unknown state [{str(self.result.info)}]',
+            }
 
 
 class KnownResult(EagerResult):
