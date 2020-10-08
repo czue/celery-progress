@@ -73,10 +73,10 @@ class ProgressRecorder(AbstractProgressRecorder):
 class Progress(object):
 
     def __init__(self, result):
-        '''
+        """
         result:
             an AsyncResult or an object that mimics it to a degree
-        '''
+        """
         self.result = result
 
     def get_info(self):
@@ -111,12 +111,12 @@ class Progress(object):
 
 
 class KnownResult(EagerResult):
-    '''Like EagerResult but supports non-ready states.'''
+    """Like EagerResult but supports non-ready states."""
     def __init__(self, id, ret_value, state, traceback=None):
-        '''
+        """
         ret_value:
             result, exception, or progress metadata
-        '''
+        """
         # set backend to get state groups (like READY_STATES in ready())
         self.backend = DisabledBackend
         super().__init__(id, ret_value, state, traceback)
