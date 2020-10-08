@@ -1,6 +1,6 @@
 import logging
 
-from celery_progress.backend import ProgressRecorder
+from celery_progress.backend import ProgressRecorder, Progress, KnownResult
 
 try:
     from asgiref.sync import async_to_sync
@@ -39,13 +39,13 @@ class WebSocketProgressRecorder(ProgressRecorder):
                 raise e
 
     def set_progress(self, current, total, description=""):
-        progress = super().set_progress(current, total, description)
-        data = {'complete': False, 'success': None, 'progress': progress}
+        state, meta = super().set_progress(current, total, description)
+        result = KnownResult(self.task.request.id, meta, state)
+        data = Progress(result).get_info()
         self.push_update(self.task.request.id, data)
 
     def stop_task(self, current, total, exc):
-        progress = super().stop_task(current, total, exc)
-        progress.pop('exc_type')
-        result = progress.pop('exc_message')
-        data = {'complete': True, 'success': False, 'progress': progress, 'result': result}
+        state, _ = super().stop_task(current, total, exc)
+        result = KnownResult(self.task.request.id, exc, state)
+        data = Progress(result).get_info()
         self.push_update(self.task.request.id, data)
