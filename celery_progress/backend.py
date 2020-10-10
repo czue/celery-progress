@@ -106,7 +106,7 @@ class Progress(object):
                 'complete': True,
                 'success': False,
                 'progress': _get_unknown_progress(self.result.state),
-                'result': f'Unknown state [{str(self.result.info)}]',
+                'result': 'Unknown state {}'.format(str(self.result.info)),
             }
 
 
