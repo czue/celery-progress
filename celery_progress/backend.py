@@ -15,18 +15,11 @@ class AbstractProgressRecorder(object):
     def set_progress(self, current, total, description=""):
         pass
 
-    @abstractmethod
-    def stop_task(self, current, total, exc):
-        pass
-
 
 class ConsoleProgressRecorder(AbstractProgressRecorder):
 
     def set_progress(self, current, total, description=""):
         print('processed {} items of {}. {}'.format(current, total, description))
-
-    def stop_task(self, current, total, exc):
-        pass
 
 
 class ProgressRecorder(AbstractProgressRecorder):
@@ -46,22 +39,6 @@ class ProgressRecorder(AbstractProgressRecorder):
             'total': total,
             'percent': percent,
             'description': description
-        }
-        self.task.update_state(
-            state=state,
-            meta=meta
-        )
-        return state, meta
-
-    def stop_task(self, current, total, exc):
-        state = 'FAILURE'
-        meta = {
-            'pending': False,
-            'current': current,
-            'total': total,
-            'percent': 100.0,
-            'exc_message': str(exc),
-            'exc_type': str(type(exc))
         }
         self.task.update_state(
             state=state,

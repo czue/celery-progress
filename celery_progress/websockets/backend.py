@@ -43,9 +43,3 @@ class WebSocketProgressRecorder(ProgressRecorder):
         result = KnownResult(self.task.request.id, meta, state)
         data = Progress(result).get_info()
         self.push_update(self.task.request.id, data)
-
-    def stop_task(self, current, total, exc):
-        state, _ = super().stop_task(current, total, exc)
-        result = KnownResult(self.task.request.id, exc, state)
-        data = Progress(result).get_info()
-        self.push_update(self.task.request.id, data)

@@ -60,12 +60,6 @@ You can add an optional progress description like this:
   progress_recorder.set_progress(i + 1, seconds, description='my progress description')
 ```
 
-You can stop your task with an exception message like this:
-
-```python
-  progress_recorder.stop_task(i + 1, seconds, 'my exception message')
-```
-
 ### Displaying progress
 
 In the view where you call the task you need to get the task ID like so:
@@ -175,8 +169,8 @@ The `initProgressBar` function takes an optional object of options. The followin
 
 # WebSocket Support
 
-This library has experimental WebSocket support using [Django Channels](https://channels.readthedocs.io/en/latest/)
-courtesy of [@EJH2](https://github.com/EJH2/).
+Additionally, this library has offers WebSocket support using [Django Channels](https://channels.readthedocs.io/en/latest/)
+courtesy of [EJH2](https://github.com/EJH2/).
 
 A working example project leveraging WebSockets is [available here](https://github.com/EJH2/cp_ws-example).
 
