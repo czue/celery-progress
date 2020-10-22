@@ -1,3 +1,4 @@
+import datetime
 from abc import ABCMeta, abstractmethod
 from decimal import Decimal
 
@@ -66,6 +67,20 @@ class Progress(object):
                     'progress': _get_completed_progress(),
                     'result': self.result.get(self.result.id) if success else str(self.result.info),
                 }
+        elif self.result.state == 'RETRY':
+            retry = self.result.info
+            when = str(retry.when) if isinstance(retry.when, datetime.datetime) else str(
+                    datetime.datetime.now() + datetime.timedelta(seconds=retry.when))
+            return {
+                'complete': True,
+                'success': False,
+                'progress': _get_completed_progress(),
+                'result': {
+                    'when': when,
+                    'message': retry.message or str(retry.exc)
+                },
+                'retry': True
+            }
         elif self.result.state == PROGRESS_STATE:
             return {
                 'complete': False,
