@@ -86,7 +86,7 @@ class CeleryProgressBar {
             if (data.success === true) {
                 this.onSuccess(this.progressBarElement, this.progressBarMessageElement, this.getMessageDetails(data.result));
             } else if (data.success === false) {
-                if (data.hasOwnProperty('retry')) {
+                if (data.state === 'RETRY') {
                     this.onRetry(this.progressBarElement, this.progressBarMessageElement, data.result.message, data.result.when);
                     done = false;
                     delete data.result;

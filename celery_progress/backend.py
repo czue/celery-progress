@@ -58,20 +58,21 @@ class Progress(object):
         self.result = result
 
     def get_info(self):
+        response = {'state': self.result.state}
         if self.result.ready():
             success = self.result.successful()
             with allow_join_result():
-                return {
+                response.update({
                     'complete': True,
                     'success': success,
                     'progress': _get_completed_progress(),
                     'result': self.result.get(self.result.id) if success else str(self.result.info),
-                }
+                })
         elif self.result.state == 'RETRY':
             retry = self.result.info
             when = str(retry.when) if isinstance(retry.when, datetime.datetime) else str(
                     datetime.datetime.now() + datetime.timedelta(seconds=retry.when))
-            return {
+            response.update({
                 'complete': True,
                 'success': False,
                 'progress': _get_completed_progress(),
@@ -79,27 +80,27 @@ class Progress(object):
                     'when': when,
                     'message': retry.message or str(retry.exc)
                 },
-                'retry': True
-            }
+            })
         elif self.result.state == PROGRESS_STATE:
-            return {
+            response.update({
                 'complete': False,
                 'success': None,
                 'progress': self.result.info,
-            }
+            })
         elif self.result.state in ['PENDING', 'STARTED']:
-            return {
+            response.update({
                 'complete': False,
                 'success': None,
                 'progress': _get_unknown_progress(self.result.state),
-            }
+            })
         else:
-            return {
+            response.update({
                 'complete': True,
                 'success': False,
                 'progress': _get_unknown_progress(self.result.state),
                 'result': 'Unknown state {}'.format(str(self.result.info)),
-            }
+            })
+        return response
 
 
 class KnownResult(EagerResult):
