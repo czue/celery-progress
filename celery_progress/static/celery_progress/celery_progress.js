@@ -20,6 +20,13 @@ class CeleryProgressBar {
         this.onNetworkError = options.onNetworkError || this.onError;
         this.onHttpError = options.onHttpError || this.onError;
         this.pollInterval = options.pollInterval || 500;
+        // Other options
+        let barColors = {
+            'success': '#76ce60',
+            'error': '#dc4f63',
+            'progress': '#68a9ef'
+        }
+        this.barColors = Object.assign({}, barColors, options.barColors);
     }
 
     static onSuccessDefault(progressBarElement, progressBarMessageElement, result) {
