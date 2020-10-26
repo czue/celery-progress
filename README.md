@@ -166,7 +166,7 @@ The `initProgressBar` function takes an optional object of options. The followin
 | onHttpError | function to call on a non-200 response (ignored by WebSocket) | onError |
 | onDataError | function to call on a response that's not JSON or has invalid schema due to a programming error | onError |
 | onResult | function to call when returned non empty result | CeleryProgressBar.onResultDefault |
-
+| barColors | dictionary containing color values for various progress bar states. Colors that are not specified will defer to defaults | {'success': '#76ce60', 'error': '#dc4f63', 'progress': '#68a9ef'} |
 
 # WebSocket Support
 
