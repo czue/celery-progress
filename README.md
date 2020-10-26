@@ -157,10 +157,10 @@ The `initProgressBar` function takes an optional object of options. The followin
 | progressBarMessageElement | Override the *element* used for the progress bar message. If specified, progressBarMessageId will be ignored. | document.getElementById(progressBarMessageId) |
 | resultElementId | Override the ID used for the result | 'celery-result' |
 | resultElement | Override the *element* used for the result. If specified, resultElementId will be ignored. | document.getElementById(resultElementId) |
-| onProgress | function to call when progress is updated | CeleryProgressBar.onProgressDefault |
-| onSuccess | function to call when progress successfully completes | CeleryProgressBar.onSuccessDefault |
-| onError | function to call on a known error with no specified handler | CeleryProgressBar.onErrorDefault |
-| onRetry | function to call when a task attempts to retry | CeleryProgressBar.onRetryDefault |
+| onProgress | function to call when progress is updated | onProgressDefault |
+| onSuccess | function to call when progress successfully completes | onSuccessDefault |
+| onError | function to call on a known error with no specified handler | onErrorDefault |
+| onRetry | function to call when a task attempts to retry | onRetryDefault |
 | onTaskError | function to call when progress completes with an error | onError |
 | onNetworkError | function to call on a network error (ignored by WebSocket) | onError |
 | onHttpError | function to call on a non-200 response (ignored by WebSocket) | onError |
