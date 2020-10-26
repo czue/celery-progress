@@ -12,6 +12,7 @@ class CeleryProgressBar {
         this.onError = options.onError || CeleryProgressBar.onErrorDefault;
         this.onTaskError = options.onTaskError || this.onError;
         this.onDataError = options.onDataError || this.onError;
+        this.onRetry = options.onRetry || this.onRetryDefault;
         let resultElementId = options.resultElementId || 'celery-result';
         this.resultElement = options.resultElement || document.getElementById(resultElementId);
         this.onResult = options.onResult || CeleryProgressBar.onResultDefault;
@@ -40,6 +41,12 @@ class CeleryProgressBar {
         progressBarElement.style.backgroundColor = '#dc4f63';
         excMessage = excMessage || '';
         progressBarMessageElement.textContent = "Uh-Oh, something went wrong! " + excMessage;
+    }
+
+    onRetryDefault(progressBarElement, progressBarMessageElement, excMessage, retryWhen) {
+        retryWhen = new Date(retryWhen);
+        let message = 'Retrying in ' + Math.round((retryWhen.getTime() - Date.now())/1000) + 's: ' + excMessage;
+        this.onTaskError(progressBarElement, progressBarMessageElement, message);
     }
 
     static onProgressDefault(progressBarElement, progressBarMessageElement, progress) {
@@ -79,7 +86,13 @@ class CeleryProgressBar {
             if (data.success === true) {
                 this.onSuccess(this.progressBarElement, this.progressBarMessageElement, this.getMessageDetails(data.result));
             } else if (data.success === false) {
-                this.onTaskError(this.progressBarElement, this.progressBarMessageElement, this.getMessageDetails(data.result));
+                if (data.state === 'RETRY') {
+                    this.onRetry(this.progressBarElement, this.progressBarMessageElement, data.result.message, data.result.when);
+                    done = false;
+                    delete data.result;
+                } else {
+                    this.onTaskError(this.progressBarElement, this.progressBarMessageElement, this.getMessageDetails(data.result));
+                }
             } else {
                 done = undefined;
                 this.onDataError(this.progressBarElement, this.progressBarMessageElement, "Data Error");

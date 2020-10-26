@@ -160,6 +160,7 @@ The `initProgressBar` function takes an optional object of options. The followin
 | onProgress | function to call when progress is updated | CeleryProgressBar.onProgressDefault |
 | onSuccess | function to call when progress successfully completes | CeleryProgressBar.onSuccessDefault |
 | onError | function to call on a known error with no specified handler | CeleryProgressBar.onErrorDefault |
+| onRetry | function to call when a task attempts to retry | CeleryProgressBar.onRetryDefault |
 | onTaskError | function to call when progress completes with an error | onError |
 | onNetworkError | function to call on a network error (ignored by WebSocket) | onError |
 | onHttpError | function to call on a non-200 response (ignored by WebSocket) | onError |
