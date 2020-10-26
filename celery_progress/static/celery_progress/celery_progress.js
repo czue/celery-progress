@@ -7,9 +7,9 @@ class CeleryProgressBar {
         let progressBarMessage = options.progressBarMessageId || 'progress-bar-message';
         this.progressBarElement = options.progressBarElement || document.getElementById(progressBarId);
         this.progressBarMessageElement = options.progressBarMessageElement || document.getElementById(progressBarMessage);
-        this.onProgress = options.onProgress || CeleryProgressBar.onProgressDefault;
-        this.onSuccess = options.onSuccess || CeleryProgressBar.onSuccessDefault;
-        this.onError = options.onError || CeleryProgressBar.onErrorDefault;
+        this.onProgress = options.onProgress || this.onProgressDefault;
+        this.onSuccess = options.onSuccess || this.onSuccessDefault;
+        this.onError = options.onError || this.onErrorDefault;
         this.onTaskError = options.onTaskError || this.onError;
         this.onDataError = options.onDataError || this.onError;
         this.onRetry = options.onRetry || this.onRetryDefault;
@@ -29,8 +29,8 @@ class CeleryProgressBar {
         this.barColors = Object.assign({}, barColors, options.barColors);
     }
 
-    static onSuccessDefault(progressBarElement, progressBarMessageElement, result) {
-        progressBarElement.style.backgroundColor = '#76ce60';
+    onSuccessDefault(progressBarElement, progressBarMessageElement, result) {
+        progressBarElement.style.backgroundColor = this.barColors.success;
         progressBarMessageElement.textContent = "Success! " + result;
     }
 
@@ -44,8 +44,8 @@ class CeleryProgressBar {
      * Default handler for all errors.
      * @param data - A Response object for HTTP errors, undefined for other errors
      */
-    static onErrorDefault(progressBarElement, progressBarMessageElement, excMessage, data) {
-        progressBarElement.style.backgroundColor = '#dc4f63';
+    onErrorDefault(progressBarElement, progressBarMessageElement, excMessage, data) {
+        progressBarElement.style.backgroundColor = this.barColors.error;
         excMessage = excMessage || '';
         progressBarMessageElement.textContent = "Uh-Oh, something went wrong! " + excMessage;
     }
@@ -56,8 +56,8 @@ class CeleryProgressBar {
         this.onTaskError(progressBarElement, progressBarMessageElement, message);
     }
 
-    static onProgressDefault(progressBarElement, progressBarMessageElement, progress) {
-        progressBarElement.style.backgroundColor = '#68a9ef';
+    onProgressDefault(progressBarElement, progressBarMessageElement, progress) {
+        progressBarElement.style.backgroundColor = this.barColors.progress;
         progressBarElement.style.width = progress.percent + "%";
         var description = progress.description || "";
         if (progress.current == 0) {
