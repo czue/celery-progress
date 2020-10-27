@@ -4,6 +4,7 @@ from decimal import Decimal
 
 from celery.result import EagerResult, allow_join_result
 from celery.backends.base import DisabledBackend
+from celery import states
 
 
 PROGRESS_STATE = 'PROGRESS'
@@ -59,7 +60,7 @@ class Progress(object):
 
     def get_info(self):
         response = {'state': self.result.state}
-        if self.result.ready():
+        if self.result.state in [states.SUCCESS, states.FAILURE]:
             success = self.result.successful()
             with allow_join_result():
                 response.update({
@@ -87,7 +88,7 @@ class Progress(object):
                 'success': None,
                 'progress': self.result.info,
             })
-        elif self.result.state in ['PENDING', 'STARTED']:
+        elif self.result.state in states.UNREADY_STATES:
             response.update({
                 'complete': False,
                 'success': None,
