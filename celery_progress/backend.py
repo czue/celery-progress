@@ -59,7 +59,7 @@ class Progress(object):
 
     def get_info(self):
         response = {'state': self.result.state}
-        if self.result.ready():
+        if self.result.state in ['SUCCESS', 'FAILURE']:
             success = self.result.successful()
             with allow_join_result():
                 response.update({
@@ -68,18 +68,19 @@ class Progress(object):
                     'progress': _get_completed_progress(),
                     'result': self.result.get(self.result.id) if success else str(self.result.info),
                 })
-        elif self.result.state == 'RETRY':
-            retry = self.result.info
-            when = str(retry.when) if isinstance(retry.when, datetime.datetime) else str(
-                    datetime.datetime.now() + datetime.timedelta(seconds=retry.when))
+        elif self.result.state in ['RETRY', 'REVOKED']:
+            if self.result.state == 'RETRY':
+                retry = self.result.info
+                when = str(retry.when) if isinstance(retry.when, datetime.datetime) else str(
+                        datetime.datetime.now() + datetime.timedelta(seconds=retry.when))
+                result = {'when': when, 'message': retry.message or str(retry.exc)}
+            else:
+                result = 'Task ' + str(self.result.info)
             response.update({
                 'complete': True,
                 'success': False,
                 'progress': _get_completed_progress(),
-                'result': {
-                    'when': when,
-                    'message': retry.message or str(retry.exc)
-                },
+                'result': result,
             })
         elif self.result.state == PROGRESS_STATE:
             response.update({
