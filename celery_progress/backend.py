@@ -4,7 +4,6 @@ from decimal import Decimal
 
 from celery.result import EagerResult, allow_join_result
 from celery.backends.base import DisabledBackend
-from celery import states
 
 
 PROGRESS_STATE = 'PROGRESS'
@@ -60,7 +59,7 @@ class Progress(object):
 
     def get_info(self):
         response = {'state': self.result.state}
-        if self.result.state in [states.SUCCESS, states.FAILURE]:
+        if self.result.state in ['SUCCESS', 'FAILURE']:
             success = self.result.successful()
             with allow_join_result():
                 response.update({
@@ -69,7 +68,7 @@ class Progress(object):
                     'progress': _get_completed_progress(),
                     'result': self.result.get(self.result.id) if success else str(self.result.info),
                 })
-        elif self.result.state in states.EXCEPTION_STATES:
+        elif self.result.state in ['RETRY', 'REVOKED']:
             if self.result.state == 'RETRY':
                 retry = self.result.info
                 when = str(retry.when) if isinstance(retry.when, datetime.datetime) else str(
@@ -89,7 +88,7 @@ class Progress(object):
                 'success': None,
                 'progress': self.result.info,
             })
-        elif self.result.state in states.UNREADY_STATES:
+        elif self.result.state in ['PENDING', 'STARTED']:
             response.update({
                 'complete': False,
                 'success': None,
