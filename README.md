@@ -169,6 +169,15 @@ The `initProgressBar` function takes an optional object of options. The followin
 | onResult | function to call when returned non empty result | CeleryProgressBar.onResultDefault |
 | barColors | dictionary containing color values for various progress bar states. Colors that are not specified will defer to defaults | barColorsDefault |
 
+The `barColors` option allows you to customize the color of each progress bar state by passing a dictionary of key-value pairs of `state: #hexcode`. The defaults are shown below.
+
+| State | Hex Code | Image Color | 
+|-------|----------|:-------------:|
+| success | #76ce60 | ![#76ce60](https://placehold.it/15/76ce60/000000?text=+) |
+| error | #dc4f63 | ![#dc4f63](https://placehold.it/15/dc4f63/000000?text=+) |
+| progress | #68a9ef | ![#68a9ef](https://placehold.it/15/68a9ef/000000?text=+) |
+| ignored | #7a7a7a | ![#7a7a7a](https://placehold.it/15/7a7a7a/000000?text=+) |
+
 # WebSocket Support
 
 Additionally, this library has offers WebSocket support using [Django Channels](https://channels.readthedocs.io/en/latest/)
