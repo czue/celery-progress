@@ -13,6 +13,7 @@ class CeleryProgressBar {
         this.onTaskError = options.onTaskError || this.onError;
         this.onDataError = options.onDataError || this.onError;
         this.onRetry = options.onRetry || this.onRetryDefault;
+        this.onIgnored = options.onIgnored || this.onIgnoredDefault;
         let resultElementId = options.resultElementId || 'celery-result';
         this.resultElement = options.resultElement || document.getElementById(resultElementId);
         this.onResult = options.onResult || CeleryProgressBar.onResultDefault;
@@ -21,12 +22,13 @@ class CeleryProgressBar {
         this.onHttpError = options.onHttpError || this.onError;
         this.pollInterval = options.pollInterval || 500;
         // Other options
-        let barColors = {
-            'success': '#76ce60',
-            'error': '#dc4f63',
-            'progress': '#68a9ef'
+        let barColorsDefault = {
+            success: '#76ce60',
+            error: '#dc4f63',
+            progress: '#68a9ef',
+            ignored: '#7a7a7a'
         }
-        this.barColors = Object.assign({}, barColors, options.barColors);
+        this.barColors = Object.assign({}, barColorsDefault, options.barColors);
     }
 
     onSuccessDefault(progressBarElement, progressBarMessageElement, result) {
@@ -54,6 +56,11 @@ class CeleryProgressBar {
         retryWhen = new Date(retryWhen);
         let message = 'Retrying in ' + Math.round((retryWhen.getTime() - Date.now())/1000) + 's: ' + excMessage;
         this.onTaskError(progressBarElement, progressBarMessageElement, message);
+    }
+
+    onIgnoredDefault(progressBarElement, progressBarMessageElement, result) {
+        progressBarElement.style.backgroundColor = this.barColors.ignored;
+        progressBarMessageElement.textContent =  result || 'Task result ignored!'
     }
 
     onProgressDefault(progressBarElement, progressBarMessageElement, progress) {
@@ -101,8 +108,13 @@ class CeleryProgressBar {
                     this.onTaskError(this.progressBarElement, this.progressBarMessageElement, this.getMessageDetails(data.result));
                 }
             } else {
-                done = undefined;
-                this.onDataError(this.progressBarElement, this.progressBarMessageElement, "Data Error");
+                if (data.state === 'IGNORED') {
+                    this.onIgnored(this.progressBarElement, this.progressBarMessageElement, data.result);
+                    delete data.result;
+                } else {
+                    done = undefined;
+                    this.onDataError(this.progressBarElement, this.progressBarMessageElement, "Data Error");
+                }
             }
             if (data.hasOwnProperty('result')) {
                 this.onResult(this.resultElement, data.result);

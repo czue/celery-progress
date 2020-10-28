@@ -161,16 +161,26 @@ The `initProgressBar` function takes an optional object of options. The followin
 | onSuccess | function to call when progress successfully completes | onSuccessDefault |
 | onError | function to call on a known error with no specified handler | onErrorDefault |
 | onRetry | function to call when a task attempts to retry | onRetryDefault |
+| onIgnored | function to call when a task result is ignored | onIgnoredDefault |
 | onTaskError | function to call when progress completes with an error | onError |
 | onNetworkError | function to call on a network error (ignored by WebSocket) | onError |
 | onHttpError | function to call on a non-200 response (ignored by WebSocket) | onError |
 | onDataError | function to call on a response that's not JSON or has invalid schema due to a programming error | onError |
 | onResult | function to call when returned non empty result | CeleryProgressBar.onResultDefault |
-| barColors | dictionary containing color values for various progress bar states. Colors that are not specified will defer to defaults | {'success': '#76ce60', 'error': '#dc4f63', 'progress': '#68a9ef'} |
+| barColors | dictionary containing color values for various progress bar states. Colors that are not specified will defer to defaults | barColorsDefault |
+
+The `barColors` option allows you to customize the color of each progress bar state by passing a dictionary of key-value pairs of `state: #hexcode`. The defaults are shown below.
+
+| State | Hex Code | Image Color | 
+|-------|----------|:-------------:|
+| success | #76ce60 | ![#76ce60](https://placehold.it/15/76ce60/000000?text=+) |
+| error | #dc4f63 | ![#dc4f63](https://placehold.it/15/dc4f63/000000?text=+) |
+| progress | #68a9ef | ![#68a9ef](https://placehold.it/15/68a9ef/000000?text=+) |
+| ignored | #7a7a7a | ![#7a7a7a](https://placehold.it/15/7a7a7a/000000?text=+) |
 
 # WebSocket Support
 
-Additionally, this library has offers WebSocket support using [Django Channels](https://channels.readthedocs.io/en/latest/)
+Additionally, this library offers WebSocket support using [Django Channels](https://channels.readthedocs.io/en/latest/)
 courtesy of [EJH2](https://github.com/EJH2/).
 
 A working example project leveraging WebSockets is [available here](https://github.com/EJH2/cp_ws-example).
