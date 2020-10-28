@@ -108,8 +108,12 @@ class CeleryProgressBar {
                     this.onTaskError(this.progressBarElement, this.progressBarMessageElement, this.getMessageDetails(data.result));
                 }
             } else {
-                done = undefined;
-                this.onDataError(this.progressBarElement, this.progressBarMessageElement, "Data Error");
+                if (data.state === 'IGNORED') {
+                    this.onIgnored(this.progressBarElement, this.progressBarMessageElement);
+                } else {
+                    done = undefined;
+                    this.onDataError(this.progressBarElement, this.progressBarMessageElement, "Data Error");
+                }
             }
             if (data.hasOwnProperty('result')) {
                 this.onResult(this.resultElement, data.result);
