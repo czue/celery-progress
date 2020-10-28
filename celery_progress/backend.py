@@ -82,6 +82,12 @@ class Progress(object):
                 'progress': _get_completed_progress(),
                 'result': result,
             })
+        elif self.result.state == 'IGNORED':
+            response.update({
+                'complete': True,
+                'success': None,
+                'progress': _get_completed_progress()
+            })
         elif self.result.state == PROGRESS_STATE:
             response.update({
                 'complete': False,
