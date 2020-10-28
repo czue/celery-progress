@@ -161,6 +161,7 @@ The `initProgressBar` function takes an optional object of options. The followin
 | onSuccess | function to call when progress successfully completes | onSuccessDefault |
 | onError | function to call on a known error with no specified handler | onErrorDefault |
 | onRetry | function to call when a task attempts to retry | onRetryDefault |
+| onIgnored | function to call when a task result is ignored | onIgnoredDefault |
 | onTaskError | function to call when progress completes with an error | onError |
 | onNetworkError | function to call on a network error (ignored by WebSocket) | onError |
 | onHttpError | function to call on a non-200 response (ignored by WebSocket) | onError |
