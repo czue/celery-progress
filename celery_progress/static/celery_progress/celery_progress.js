@@ -13,6 +13,7 @@ class CeleryProgressBar {
         this.onTaskError = options.onTaskError || this.onError;
         this.onDataError = options.onDataError || this.onError;
         this.onRetry = options.onRetry || this.onRetryDefault;
+        this.onIgnored = options.onIgnored || this.onIgnoredDefault;
         let resultElementId = options.resultElementId || 'celery-result';
         this.resultElement = options.resultElement || document.getElementById(resultElementId);
         this.onResult = options.onResult || CeleryProgressBar.onResultDefault;
@@ -24,7 +25,8 @@ class CeleryProgressBar {
         let barColors = {
             'success': '#76ce60',
             'error': '#dc4f63',
-            'progress': '#68a9ef'
+            'progress': '#68a9ef',
+            'ignored': '#7a7a7a'
         }
         this.barColors = Object.assign({}, barColors, options.barColors);
     }
@@ -54,6 +56,11 @@ class CeleryProgressBar {
         retryWhen = new Date(retryWhen);
         let message = 'Retrying in ' + Math.round((retryWhen.getTime() - Date.now())/1000) + 's: ' + excMessage;
         this.onTaskError(progressBarElement, progressBarMessageElement, message);
+    }
+
+    onIgnoredDefault(progressBarElement, progressBarMessageElement) {
+        progressBarElement.style.backgroundColor = this.barColors.ignored;
+        progressBarMessageElement.textContent = 'Task result ignored!'
     }
 
     onProgressDefault(progressBarElement, progressBarMessageElement, progress) {
