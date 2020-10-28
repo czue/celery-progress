@@ -8,4 +8,4 @@ def task_postrun_handler(**kwargs):
     Necessary for HTTP to properly receive ignored task event."""
     if kwargs.pop('state') == 'IGNORED':
         task = kwargs.pop('task')
-        task.update_state(state='IGNORED')
+        task.update_state(state='IGNORED', meta=str(kwargs.pop('retval')))

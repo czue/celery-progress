@@ -86,7 +86,8 @@ class Progress(object):
             response.update({
                 'complete': True,
                 'success': None,
-                'progress': _get_completed_progress()
+                'progress': _get_completed_progress(),
+                'result': str(self.result.info)
             })
         elif self.result.state == PROGRESS_STATE:
             response.update({

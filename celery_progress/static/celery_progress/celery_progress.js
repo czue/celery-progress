@@ -58,9 +58,9 @@ class CeleryProgressBar {
         this.onTaskError(progressBarElement, progressBarMessageElement, message);
     }
 
-    onIgnoredDefault(progressBarElement, progressBarMessageElement) {
+    onIgnoredDefault(progressBarElement, progressBarMessageElement, result) {
         progressBarElement.style.backgroundColor = this.barColors.ignored;
-        progressBarMessageElement.textContent = 'Task result ignored!'
+        progressBarMessageElement.textContent =  result || 'Task result ignored!'
     }
 
     onProgressDefault(progressBarElement, progressBarMessageElement, progress) {
@@ -109,7 +109,8 @@ class CeleryProgressBar {
                 }
             } else {
                 if (data.state === 'IGNORED') {
-                    this.onIgnored(this.progressBarElement, this.progressBarMessageElement);
+                    this.onIgnored(this.progressBarElement, this.progressBarMessageElement, data.result);
+                    delete data.result;
                 } else {
                     done = undefined;
                     this.onDataError(this.progressBarElement, this.progressBarMessageElement, "Data Error");
