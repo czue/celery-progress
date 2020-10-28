@@ -180,7 +180,7 @@ The `barColors` option allows you to customize the color of each progress bar st
 
 # WebSocket Support
 
-Additionally, this library has offers WebSocket support using [Django Channels](https://channels.readthedocs.io/en/latest/)
+Additionally, this library offers WebSocket support using [Django Channels](https://channels.readthedocs.io/en/latest/)
 courtesy of [EJH2](https://github.com/EJH2/).
 
 A working example project leveraging WebSockets is [available here](https://github.com/EJH2/cp_ws-example).
