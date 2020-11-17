@@ -16,7 +16,7 @@ class CeleryProgressBar {
         this.onIgnored = options.onIgnored || this.onIgnoredDefault;
         let resultElementId = options.resultElementId || 'celery-result';
         this.resultElement = options.resultElement || document.getElementById(resultElementId);
-        this.onResult = options.onResult || CeleryProgressBar.onResultDefault;
+        this.onResult = options.onResult || this.onResultDefault;
         // HTTP options
         this.onNetworkError = options.onNetworkError || this.onError;
         this.onHttpError = options.onHttpError || this.onError;
@@ -36,7 +36,7 @@ class CeleryProgressBar {
         progressBarMessageElement.textContent = "Success! " + result;
     }
 
-    static onResultDefault(resultElement, result) {
+    onResultDefault(resultElement, result) {
         if (resultElement) {
             resultElement.textContent = result;
         }
