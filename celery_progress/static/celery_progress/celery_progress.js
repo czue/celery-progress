@@ -32,6 +32,7 @@ class CeleryProgressBar {
     }
 
     onSuccessDefault(progressBarElement, progressBarMessageElement, result) {
+        result = this.getMessageDetails(result);
         progressBarElement.style.backgroundColor = this.barColors.success;
         progressBarMessageElement.textContent = "Success! " + result;
     }
@@ -98,7 +99,7 @@ class CeleryProgressBar {
         if (data.complete === true) {
             done = true;
             if (data.success === true) {
-                this.onSuccess(this.progressBarElement, this.progressBarMessageElement, this.getMessageDetails(data.result));
+                this.onSuccess(this.progressBarElement, this.progressBarMessageElement, data.result);
             } else if (data.success === false) {
                 if (data.state === 'RETRY') {
                     this.onRetry(this.progressBarElement, this.progressBarMessageElement, data.result.message, data.result.when);
