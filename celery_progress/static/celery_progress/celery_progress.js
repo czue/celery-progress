@@ -10,13 +10,13 @@ class CeleryProgressBar {
         this.onProgress = options.onProgress || this.onProgressDefault;
         this.onSuccess = options.onSuccess || this.onSuccessDefault;
         this.onError = options.onError || this.onErrorDefault;
-        this.onTaskError = options.onTaskError || this.onError;
+        this.onTaskError = options.onTaskError || this.onTaskErrorDefault;
         this.onDataError = options.onDataError || this.onError;
         this.onRetry = options.onRetry || this.onRetryDefault;
         this.onIgnored = options.onIgnored || this.onIgnoredDefault;
         let resultElementId = options.resultElementId || 'celery-result';
         this.resultElement = options.resultElement || document.getElementById(resultElementId);
-        this.onResult = options.onResult || CeleryProgressBar.onResultDefault;
+        this.onResult = options.onResult || this.onResultDefault;
         // HTTP options
         this.onNetworkError = options.onNetworkError || this.onError;
         this.onHttpError = options.onHttpError || this.onError;
@@ -37,7 +37,7 @@ class CeleryProgressBar {
         progressBarMessageElement.textContent = "Success! " + result;
     }
 
-    static onResultDefault(resultElement, result) {
+    onResultDefault(resultElement, result) {
         if (resultElement) {
             resultElement.textContent = result;
         }
@@ -53,10 +53,15 @@ class CeleryProgressBar {
         progressBarMessageElement.textContent = "Uh-Oh, something went wrong! " + excMessage;
     }
 
+    onTaskErrorDefault(progressBarElement, progressBarMessageElement, excMessage) {
+        let message = this.getMessageDetails(excMessage);
+        this.onError(progressBarElement, progressBarMessageElement, message);
+    }
+
     onRetryDefault(progressBarElement, progressBarMessageElement, excMessage, retryWhen) {
         retryWhen = new Date(retryWhen);
         let message = 'Retrying in ' + Math.round((retryWhen.getTime() - Date.now())/1000) + 's: ' + excMessage;
-        this.onTaskError(progressBarElement, progressBarMessageElement, message);
+        this.onError(progressBarElement, progressBarMessageElement, message);
     }
 
     onIgnoredDefault(progressBarElement, progressBarMessageElement, result) {
@@ -106,7 +111,7 @@ class CeleryProgressBar {
                     done = false;
                     delete data.result;
                 } else {
-                    this.onTaskError(this.progressBarElement, this.progressBarMessageElement, this.getMessageDetails(data.result));
+                    this.onTaskError(this.progressBarElement, this.progressBarMessageElement, data.result);
                 }
             } else {
                 if (data.state === 'IGNORED') {
