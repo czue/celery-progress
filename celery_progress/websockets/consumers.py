@@ -27,11 +27,12 @@ class ProgressConsumer(AsyncWebsocketConsumer):
         task_type = text_data_json['type']
 
         if task_type == 'check_task_completion':
+            from asgiref.sync import sync_to_async
             await self.channel_layer.group_send(
                 self.task_id,
                 {
                     'type': 'update_task_progress',
-                    'data': Progress(AsyncResult(self.task_id)).get_info()
+                    'data': await sync_to_async(Progress(AsyncResult(self.task_id)).get_info, thread_sensitive=True)()
                 }
             )
 
