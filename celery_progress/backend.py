@@ -109,7 +109,7 @@ class Progress(object):
                 'complete': True,
                 'success': False,
                 'progress': _get_unknown_progress(self.result.state),
-                'result': 'Unknown state {}: {}'.format(self.result.state, str(self.result.info)),
+                'result': 'Unknown state {}'.format(self.result.state),
             })
         return response
 
