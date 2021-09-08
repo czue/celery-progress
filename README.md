@@ -184,7 +184,7 @@ The `defaultMessages` option allows you to override some default messages in the
 | Message Id | When Shown | Default Value |
 |-------|----------|:-------------:|
 | waiting | Task is waiting to start | 'Waiting for task to start...'
-| error | Task has started but reports no progress | 'Task started...'
+| started | Task has started but reports no progress | 'Task started...'
 
 # WebSocket Support
 
