@@ -29,6 +29,12 @@ class CeleryProgressBar {
             ignored: '#7a7a7a'
         }
         this.barColors = Object.assign({}, barColorsDefault, options.barColors);
+
+        let defaultMessages = {
+            waiting: 'Waiting for task to start...',
+            started: 'Task started...',
+        }
+        this.messages = Object.assign({}, defaultMessages, options.defaultMessages);
     }
 
     onSuccessDefault(progressBarElement, progressBarMessageElement, result) {
@@ -79,9 +85,9 @@ class CeleryProgressBar {
         var description = progress.description || "";
         if (progress.current == 0) {
             if (progress.pending === true) {
-                progressBarMessageElement.textContent = 'Waiting for task to start...';
+                progressBarMessageElement.textContent = this.messages.waiting;
             } else {
-                progressBarMessageElement.textContent = 'Task started...';
+                progressBarMessageElement.textContent = this.messages.started;
             }
         } else {
             progressBarMessageElement.textContent = progress.current + ' of ' + progress.total + ' processed. ' + description;
