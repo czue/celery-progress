@@ -1,10 +1,12 @@
 import datetime
+import logging
 from abc import ABCMeta, abstractmethod
 from decimal import Decimal
 
 from celery.result import EagerResult, allow_join_result
 from celery.backends.base import DisabledBackend
 
+logger = logging.getLogger(__name__)
 
 PROGRESS_STATE = 'PROGRESS'
 
@@ -102,11 +104,12 @@ class Progress(object):
                 'progress': _get_unknown_progress(self.result.state),
             })
         else:
+            logger.error('Task %s has unknown state %s with metadata %s', self.result.id, self.result.state, self.result.info)
             response.update({
                 'complete': True,
                 'success': False,
                 'progress': _get_unknown_progress(self.result.state),
-                'result': 'Unknown state {}'.format(str(self.result.info)),
+                'result': 'Unknown state {}'.format(self.result.state),
             })
         return response
 

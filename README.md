@@ -168,6 +168,7 @@ The `initProgressBar` function takes an optional object of options. The followin
 | onDataError | function to call on a response that's not JSON or has invalid schema due to a programming error | onError |
 | onResult | function to call when returned non empty result | CeleryProgressBar.onResultDefault |
 | barColors | dictionary containing color values for various progress bar states. Colors that are not specified will defer to defaults | barColorsDefault |
+| defaultMessages | dictionary containing default messages that can be overridden | see below |
 
 The `barColors` option allows you to customize the color of each progress bar state by passing a dictionary of key-value pairs of `state: #hexcode`. The defaults are shown below.
 
@@ -177,6 +178,13 @@ The `barColors` option allows you to customize the color of each progress bar st
 | error | #dc4f63 | ![#dc4f63](https://placehold.it/15/dc4f63/000000?text=+) |
 | progress | #68a9ef | ![#68a9ef](https://placehold.it/15/68a9ef/000000?text=+) |
 | ignored | #7a7a7a | ![#7a7a7a](https://placehold.it/15/7a7a7a/000000?text=+) |
+
+The `defaultMessages` option allows you to override some default messages in the UI. At the moment these are:
+
+| Message Id | When Shown | Default Value |
+|-------|----------|:-------------:|
+| waiting | Task is waiting to start | 'Waiting for task to start...'
+| started | Task has started but reports no progress | 'Task started...'
 
 # WebSocket Support
 
