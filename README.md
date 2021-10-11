@@ -197,3 +197,64 @@ To use WebSockets, install with `pip install celery-progress[websockets,redis]` 
 `pip install celery-progress[websockets,rabbitmq]` (depending on broker dependencies).
 
 See `WebSocketProgressRecorder` and `websockets.js` for details.
+
+# Securing the get_progress endpoint
+By default, anyone can see the status and result of any task by accessing `/celery-progress/<task_id>`
+
+To limit access, you need to wrap `get_progress()` in a view of your own which implements the permissions check, and _replace_ the url routing to point to your view.
+
+For example, requiring login with a class-based view:
+```python
+
+# views.py
+from celery_progress.views import get_progress
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import View
+
+class TaskStatus(LoginRequiredMixin, View):
+    def get(self, request, task_id, *args, **kwargs):
+        # Other checks could go here
+        return get_progress(request, task_id=task_id)
+```
+
+```python
+# urls.py
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    ...
+    path('task-status/<uuid:task_id>', views.TaskStatus.as_view(), name='task_status'),
+    ...
+]
+```
+
+Requiring login with a function-based view:
+```python
+
+# views.py
+from celery_progress.views import get_progress
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def task_status(request, task_id):
+    # Other checks could go here
+    return get_progress(request, task_id)
+```
+
+```python
+# urls.py
+from django.urls import path
+
+from . import views
+
+urlpatterns = [
+    ...
+    path('task-status/<uuid:task_id>', views.task_status, name='task_status'),
+    ...
+]
+```
+
+
+Any links to `'celery_progress:task_status'` will need to be changed to point to your new endpoint.
+
