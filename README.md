@@ -201,7 +201,8 @@ See `WebSocketProgressRecorder` and `websockets.js` for details.
 # Securing the get_progress endpoint
 By default, anyone can see the status and result of any task by accessing `/celery-progress/<task_id>`
 
-To limit access, you need to wrap `get_progress()` in a view of your own which implements the permissions check, and _replace_ the url routing to point to your view.
+To limit access, you need to wrap `get_progress()` in a view of your own which implements the permissions check, and create a new url routing to point to your view.  Make sure to remove any existing (unprotected) celery progress urls from your root urlconf at the same time.
+
 
 For example, requiring login with a class-based view:
 ```python
