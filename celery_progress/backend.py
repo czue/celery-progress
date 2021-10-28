@@ -60,8 +60,9 @@ class Progress(object):
         self.result = result
 
     def get_info(self):
-        response = {'state': self.result.state}
-        if self.result.state in ['SUCCESS', 'FAILURE']:
+        state = self.result.state
+        response = {'state': state}
+        if state in ['SUCCESS', 'FAILURE']:
             success = self.result.successful()
             with allow_join_result():
                 response.update({
@@ -70,8 +71,8 @@ class Progress(object):
                     'progress': _get_completed_progress(),
                     'result': self.result.get(self.result.id) if success else str(self.result.info),
                 })
-        elif self.result.state in ['RETRY', 'REVOKED']:
-            if self.result.state == 'RETRY':
+        elif state in ['RETRY', 'REVOKED']:
+            if state == 'RETRY':
                 retry = self.result.info
                 when = str(retry.when) if isinstance(retry.when, datetime.datetime) else str(
                         datetime.datetime.now() + datetime.timedelta(seconds=retry.when))
@@ -84,32 +85,32 @@ class Progress(object):
                 'progress': _get_completed_progress(),
                 'result': result,
             })
-        elif self.result.state == 'IGNORED':
+        elif state == 'IGNORED':
             response.update({
                 'complete': True,
                 'success': None,
                 'progress': _get_completed_progress(),
                 'result': str(self.result.info)
             })
-        elif self.result.state == PROGRESS_STATE:
+        elif state == PROGRESS_STATE:
             response.update({
                 'complete': False,
                 'success': None,
                 'progress': self.result.info,
             })
-        elif self.result.state in ['PENDING', 'STARTED']:
+        elif state in ['PENDING', 'STARTED']:
             response.update({
                 'complete': False,
                 'success': None,
-                'progress': _get_unknown_progress(self.result.state),
+                'progress': _get_unknown_progress(state),
             })
         else:
-            logger.error('Task %s has unknown state %s with metadata %s', self.result.id, self.result.state, self.result.info)
+            logger.error('Task %s has unknown state %s with metadata %s', self.result.id, state, self.result.info)
             response.update({
                 'complete': True,
                 'success': False,
-                'progress': _get_unknown_progress(self.result.state),
-                'result': 'Unknown state {}'.format(self.result.state),
+                'progress': _get_unknown_progress(state),
+                'result': 'Unknown state {}'.format(state),
             })
         return response
 
