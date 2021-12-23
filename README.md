@@ -174,10 +174,10 @@ The `barColors` option allows you to customize the color of each progress bar st
 
 | State | Hex Code | Image Color | 
 |-------|----------|:-------------:|
-| success | #76ce60 | ![#76ce60](https://placehold.it/15/76ce60/000000?text=+) |
-| error | #dc4f63 | ![#dc4f63](https://placehold.it/15/dc4f63/000000?text=+) |
-| progress | #68a9ef | ![#68a9ef](https://placehold.it/15/68a9ef/000000?text=+) |
-| ignored | #7a7a7a | ![#7a7a7a](https://placehold.it/15/7a7a7a/000000?text=+) |
+| success | #76ce60 | ![#76ce60](https://via.placeholder.com/15/76ce60/000000?text=+) |
+| error | #dc4f63 | ![#dc4f63](https://via.placeholder.com/15/dc4f63/000000?text=+) |
+| progress | #68a9ef | ![#68a9ef](https://via.placeholder.com/15/68a9ef/000000?text=+) |
+| ignored | #7a7a7a | ![#7a7a7a](https://via.placeholder.com/15/7a7a7a/000000?text=+) |
 
 The `defaultMessages` option allows you to override some default messages in the UI. At the moment these are:
 
