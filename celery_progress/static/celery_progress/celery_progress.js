@@ -22,13 +22,7 @@ class CeleryProgressBar {
         this.onHttpError = options.onHttpError || this.onError;
         this.pollInterval = options.pollInterval || 500;
         // Other options
-        let barColorsDefault = {
-            success: '#76ce60',
-            error: '#dc4f63',
-            progress: '#68a9ef',
-            ignored: '#7a7a7a'
-        }
-        this.barColors = Object.assign({}, barColorsDefault, options.barColors);
+        this.barColors = Object.assign({}, getBarColorsDefault(), options.barColors);
 
         let defaultMessages = {
             waiting: 'Waiting for task to start...',
@@ -167,6 +161,15 @@ class CeleryProgressBar {
             }
         } else {
             this.onHttpError(this.progressBarElement, this.progressBarMessageElement, "HTTP Code " + response.status, response);
+        }
+    }
+    
+    static getBarColorsDefault() {
+        return {
+            success: '#76ce60',
+            error: '#dc4f63',
+            progress: '#68a9ef',
+            ignored: '#7a7a7a'
         }
     }
 
