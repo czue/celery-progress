@@ -22,7 +22,7 @@ class CeleryProgressBar {
         this.onHttpError = options.onHttpError || this.onError;
         this.pollInterval = options.pollInterval || 500;
         // Other options
-        this.barColors = Object.assign({}, getBarColorsDefault(), options.barColors);
+        this.barColors = Object.assign({}, this.getBarColorsDefault(), options.barColors);
 
         let defaultMessages = {
             waiting: 'Waiting for task to start...',
