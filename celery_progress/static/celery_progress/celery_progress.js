@@ -170,7 +170,7 @@ class CeleryProgressBar {
             error: '#dc4f63',
             progress: '#68a9ef',
             ignored: '#7a7a7a'
-        }
+        };
     }
 
     static initProgressBar(progressUrl, options) {
