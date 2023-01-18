@@ -1,4 +1,8 @@
-from django.conf.urls import url
+try:
+    from django.conf.urls import url
+    re_path = url
+except ImportError:
+    from django.urls import re_path
 
 from celery_progress.websockets import consumers
 
@@ -8,5 +12,5 @@ except AttributeError:
     progress_consumer = consumers.ProgressConsumer  # Channels 3 not installed, revert to Channels 2 behavior
 
 urlpatterns = [
-    url(r'^ws/progress/(?P<task_id>[\w-]+)/?$', progress_consumer),
+    re_path(r'^ws/progress/(?P<task_id>[\w-]+)/?$', progress_consumer),
 ]
