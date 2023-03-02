@@ -12,6 +12,9 @@ else:
 
 logger = logging.getLogger(__name__)
 
+async def closing_group_send(channel_layer, channel, message):
+    await channel_layer.group_send(channel, message)
+    await channel_layer.close_pools()
 
 class WebSocketProgressRecorder(ProgressRecorder):
 
@@ -28,8 +31,9 @@ class WebSocketProgressRecorder(ProgressRecorder):
     @staticmethod
     def push_update(task_id, data, final=False):
         try:
-            async_to_sync(channel_layer.group_send)(
-                task_id,
+            async_to_sync(closing_group_send)(
+                channel_layer, 
+                task_id, 
                 {'type': 'update_task_progress', 'data': data}
             )
         except AttributeError:  # No channel layer to send to, so ignore it
