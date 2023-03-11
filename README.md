@@ -30,8 +30,13 @@ First add `celery_progress` to your `INSTALLED_APPS` in `settings.py`.
 Then add the following url config to your main `urls.py`:
 
 ```python
-from django.urls import re_path, include
-re_path(r'^celery-progress/', include('celery_progress.urls')),  # the endpoint is configurable
+from django.urls import path, include
+
+urlpatterns = [
+    # your project's patterns here
+    ...
+    path(r'^celery-progress/', include('celery_progress.urls')),  # add this line (the endpoint is configurable)
+]   
 ```
 
 ### Recording Progress
