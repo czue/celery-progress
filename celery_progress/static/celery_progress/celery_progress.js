@@ -65,7 +65,8 @@ class CeleryProgressBar {
     onRetryDefault(progressBarElement, progressBarMessageElement, excMessage, retryWhen) {
         retryWhen = new Date(retryWhen);
         let message = 'Retrying in ' + Math.round((retryWhen.getTime() - Date.now())/1000) + 's: ' + excMessage;
-        this.onError(progressBarElement, progressBarMessageElement, message);
+        progressBarElement.style.backgroundColor = this.barColors.error;
+        progressBarMessageElement.textContent =  message;
     }
 
     onIgnoredDefault(progressBarElement, progressBarMessageElement, result) {
@@ -163,7 +164,7 @@ class CeleryProgressBar {
             this.onHttpError(this.progressBarElement, this.progressBarMessageElement, "HTTP Code " + response.status, response);
         }
     }
-    
+
     static getBarColorsDefault() {
         return {
             success: '#76ce60',

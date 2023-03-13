@@ -1,5 +1,6 @@
 import datetime
 import logging
+import re
 from abc import ABCMeta, abstractmethod
 from decimal import Decimal
 
@@ -76,9 +77,29 @@ class Progress(object):
         elif state in ['RETRY', 'REVOKED']:
             if state == 'RETRY':
                 retry = info
-                when = str(retry.when) if isinstance(retry.when, datetime.datetime) else str(
-                        datetime.datetime.now() + datetime.timedelta(seconds=retry.when))
-                result = {'when': when, 'message': retry.message or str(retry.exc)}
+                try:
+                    iter(retry)
+                    when = (
+                        str(retry.when)
+                        if isinstance(retry.when, datetime.datetime)
+                        else str(
+                            datetime.datetime.now()
+                            + datetime.timedelta(seconds=retry.when)
+                        )
+                    )
+                    result = {"when": when, "message": retry.message or str(retry.exc)}
+                except:
+                    traceback = task_meta.get("traceback")
+                    seconds = re.search("\d{1,10}s", traceback)
+                    if seconds:
+                        when = str(
+                            task_meta["date_done"]
+                            + datetime.timedelta(seconds=int(seconds.group()[:-1]))
+                        )
+                    else:
+                        when = "Unknown"  # Can't find the retry time
+
+                    result = {"when": when, "message": f"{str(task_meta['result'])[0:50]}..."}
             else:
                 result = 'Task ' + str(info)
             response.update({
