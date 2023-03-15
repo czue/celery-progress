@@ -1,5 +1,6 @@
 import datetime
 import logging
+import re
 from abc import ABCMeta, abstractmethod
 from decimal import Decimal
 
@@ -75,10 +76,16 @@ class Progress(object):
                 })
         elif state in ['RETRY', 'REVOKED']:
             if state == 'RETRY':
-                retry = info
-                when = str(retry.when) if isinstance(retry.when, datetime.datetime) else str(
-                        datetime.datetime.now() + datetime.timedelta(seconds=retry.when))
-                result = {'when': when, 'message': retry.message or str(retry.exc)}
+                # in a retry sceneario, result is the exception, and 'traceback' has the details
+                # https://docs.celeryq.dev/en/stable/userguide/tasks.html#retry
+                traceback = task_meta.get("traceback")
+                seconds_re = re.search("Retry in \d{1,10}s", traceback)
+                if seconds_re:
+                    next_retry_seconds = int(seconds_re.group()[9:-1])
+                else:
+                    next_retry_seconds = "Unknown"
+
+                result = {"next_retry_seconds": next_retry_seconds, "message": f"{str(task_meta['result'])[0:50]}..."}
             else:
                 result = 'Task ' + str(info)
             response.update({
