@@ -21,6 +21,7 @@ class CeleryProgressBar {
         this.onNetworkError = options.onNetworkError || this.onError;
         this.onHttpError = options.onHttpError || this.onError;
         this.pollInterval = options.pollInterval || 500;
+        this.maxNetworkRetryAttempts = options.maxNetworkRetryAttempts | 5;
         // Other options
         this.barColors = Object.assign({}, this.constructor.getBarColorsDefault(), options.barColors);
 
@@ -138,11 +139,23 @@ class CeleryProgressBar {
 
     async connect() {
         let response;
-        try {
-            response = await fetch(this.progressUrl);
-        } catch (networkError) {
-            this.onNetworkError(this.progressBarElement, this.progressBarMessageElement, "Network Error");
-            throw networkError;
+        let success = false;
+        let error = null;
+        let attempts = 0;
+        while(!success && attempts < this.maxNetworkRetryAttempts) {
+          try {
+              response = await fetch(this.progressUrl);
+              success = true;
+          } catch (networkError) {
+              error = networkError;
+              this.onNetworkError(this.progressBarElement, this.progressBarMessageElement, "Network Error");
+              attempts++;
+              await new Promise(r => setTimeout(r, 1000));
+          }
+        }
+
+        if (!success) {
+          throw(error)
         }
 
         if (response.status === 200) {
