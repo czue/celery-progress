@@ -62,9 +62,8 @@ class CeleryProgressBar {
         this.onError(progressBarElement, progressBarMessageElement, message);
     }
 
-    onRetryDefault(progressBarElement, progressBarMessageElement, excMessage, retryWhen) {
-        retryWhen = new Date(retryWhen);
-        let message = 'Retrying in ' + Math.round((retryWhen.getTime() - Date.now())/1000) + 's: ' + excMessage;
+    onRetryDefault(progressBarElement, progressBarMessageElement, excMessage, retrySeconds) {
+        let message = 'Retrying after ' + retrySeconds + 's: ' + excMessage;
         progressBarElement.style.backgroundColor = this.barColors.error;
         progressBarMessageElement.textContent =  message;
     }
@@ -112,7 +111,7 @@ class CeleryProgressBar {
                 this.onSuccess(this.progressBarElement, this.progressBarMessageElement, data.result);
             } else if (data.success === false) {
                 if (data.state === 'RETRY') {
-                    this.onRetry(this.progressBarElement, this.progressBarMessageElement, data.result.message, data.result.when);
+                    this.onRetry(this.progressBarElement, this.progressBarMessageElement, data.result.message, data.result.next_retry_seconds);
                     done = false;
                     delete data.result;
                 } else {
