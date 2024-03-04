@@ -149,6 +149,43 @@ $(function () {
 });
 ```
 
+### Working with Groups
+
+This library includes experimental support for working with [Celery groups](https://docs.celeryq.dev/en/stable/userguide/canvas.html#groups).
+You can use the `"group_status"` URL endpoint for this. Here is a basic example:
+
+**Example task:**
+
+```python
+@shared_task(bind=True)
+def add(self, x, y):
+    return x + y
+```
+
+**Calling view:**
+
+```python
+from celery import group
+from .tasks import add
+
+def progress_view(request):
+    task_group = group(add.s(i, i) for i in range(100))
+    group_result = task_group.apply_async()
+    # you must explicitly call the save function on the group_result after calling the tasks
+    group_result.save()
+    return render(request, 'display_progress.html', context={'task_id': group_result.id})
+
+```
+
+**Template:**
+
+```html
+document.addEventListener("DOMContentLoaded", function () {
+  var progressUrl = "{% url 'celery_progress:group_status' task_id %}";
+  CeleryProgressBar.initProgressBar(progressUrl);
+});
+```
+
 ## Customization
 
 The `initProgressBar` function takes an optional object of options. The following options are supported:

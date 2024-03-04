@@ -4,7 +4,7 @@ import re
 from abc import ABCMeta, abstractmethod
 from decimal import Decimal
 
-from celery.result import EagerResult, allow_join_result
+from celery.result import EagerResult, allow_join_result, AsyncResult
 from celery.backends.base import DisabledBackend
 
 logger = logging.getLogger(__name__)
@@ -159,3 +159,34 @@ def _get_unknown_progress(state):
         'total': 100,
         'percent': 0,
     }
+
+
+class GroupProgress:
+
+    def __init__(self, group_result):
+        """
+        group_result:
+            a GroupResult or an object that mimics it to a degree
+        """
+        self.group_result = group_result
+
+    def get_info(self):
+        if not self.group_result.children:
+            raise Exception("There were no tasks to track in the group!")
+        else:
+            child_progresses = [Progress(child) for child in self.group_result.children]
+            child_infos = [cp.get_info() for cp in child_progresses]
+            child_progress_dicts = [ci["progress"] for ci in child_infos]
+            total = sum(cp["total"] for cp in child_progress_dicts)
+            current = sum(cp["current"] for cp in child_progress_dicts)
+            percent = float(round(100 * current / total, 2))
+            info = {
+                "complete": all(ci["complete"] for ci in child_infos),
+                "success": all(ci["success"] for ci in child_infos),
+                "progress": {
+                    "total": total,
+                    "current": current,
+                    "percent": percent,
+                }
+            }
+            return info
