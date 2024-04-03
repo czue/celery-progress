@@ -123,6 +123,11 @@ class Progress(object):
             })
         return response
 
+    @property
+    def is_failed(self):
+        info = self.get_info()
+        return info["complete"] and info["success"] is False
+
 
 class KnownResult(EagerResult):
     """Like EagerResult but supports non-ready states."""
