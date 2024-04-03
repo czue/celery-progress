@@ -19,19 +19,50 @@ class AbstractProgressRecorder(object):
     def set_progress(self, current, total, description=""):
         pass
 
+    @abstractmethod
+    def increment_progress(self, by=1, description=""):
+        pass
 
-class ConsoleProgressRecorder(AbstractProgressRecorder):
+
+class BaseProgressRecorder(AbstractProgressRecorder):
+    current = 0
+    total = 0
+    description = ""
+
 
     def set_progress(self, current, total, description=""):
+        self.current = current
+        self.total = total
+        if description:
+            self.description = description
+
+    def increment_progress(self, by=1, description=""):
+        """
+        Increments progress by one, with an optional description. Useful if the caller doesn't know the total.
+        """
+        self.set_progress(self.current + by, self.total, description)
+
+
+
+
+class ConsoleProgressRecorder(BaseProgressRecorder):
+
+    def set_progress(self, current, total, description=""):
+        super().set_progress(current, total, description)
         print('processed {} items of {}. {}'.format(current, total, description))
 
 
-class ProgressRecorder(AbstractProgressRecorder):
+
+class ProgressRecorder(BaseProgressRecorder):
+    current = 0
+    total = 0
+    description = ""
 
     def __init__(self, task):
         self.task = task
 
     def set_progress(self, current, total, description=""):
+        super().set_progress(current, total, description)
         percent = 0
         if total > 0:
             percent = (Decimal(current) / Decimal(total)) * Decimal(100)
