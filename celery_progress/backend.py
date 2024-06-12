@@ -54,9 +54,6 @@ class ConsoleProgressRecorder(BaseProgressRecorder):
 
 
 class ProgressRecorder(BaseProgressRecorder):
-    current = 0
-    total = 0
-    description = ""
 
     def __init__(self, task):
         self.task = task
