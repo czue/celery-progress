@@ -107,7 +107,7 @@ class Progress(object):
                 # in a retry sceneario, result is the exception, and 'traceback' has the details
                 # https://docs.celeryq.dev/en/stable/userguide/tasks.html#retry
                 traceback = task_meta.get("traceback")
-                seconds_re = re.search("Retry in \d{1,10}s", traceback)
+                seconds_re = re.search(r"Retry in \d{1,10}s", traceback)
                 if seconds_re:
                     next_retry_seconds = int(seconds_re.group()[9:-1])
                 else:
