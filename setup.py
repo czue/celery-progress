@@ -1,8 +1,6 @@
 import os
 from setuptools import find_packages, setup
 
-from glob import glob
-
 readme_name = os.path.join(os.path.dirname(__file__), 'README.md')
 
 with open(readme_name, 'r') as readme:
@@ -46,9 +44,6 @@ setup(
         'Programming Language :: Python :: 3.12',
         'Topic :: Internet :: WWW/HTTP',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
-    ],
-    data_files=[
-        ('static/celery_progress', glob('celery_progress/static/celery_progress/*', recursive=True)),
     ],
     extras_require={
         'websockets': ['channels'],
