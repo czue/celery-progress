@@ -1,5 +1,5 @@
 import os
-from setuptools import find_packages, setup
+from setuptools import find_namespace_packages, setup
 
 readme_name = os.path.join(os.path.dirname(__file__), 'README.md')
 
@@ -12,7 +12,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 setup(
     name='celery-progress',
     version='0.5',
-    packages=find_packages(),
+    packages=find_namespace_packages(include=['celery_progress', 'celery_progress.*']),
     include_package_data=True,
     license='MIT',
     description='Drop in, configurable, dependency-free progress bars for your Django/Celery applications.',
