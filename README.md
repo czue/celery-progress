@@ -21,6 +21,26 @@ Then install this library:
 pip install celery-progress
 ```
 
+### Compatibility
+
+The package metadata in [`setup.py`](setup.py) lists Python 3.11–3.14 and
+Django 4.2, 5.0–5.2, and 6.0–6.1. These are declared versions, not a tested
+matrix of every Python/Django combination. Check Django's own Python version
+requirements when choosing a pair.
+
+Celery is not pinned by this package; install it separately as part of your
+Django project. The following combinations were checked with an in-memory,
+eager Celery task, progress recording, result retrieval, and Django URL
+resolution:
+
+| Python | Django | Celery |
+| --- | --- | --- |
+| 3.12.14 | 4.2.30 | 5.5.3 |
+| 3.12.14 | 5.2.19 | 5.6.3 |
+
+These checks do not cover a production worker, broker, or the optional
+WebSocket integration. Other version combinations have not been verified here.
+
 ## Usage
 
 ### Prerequisites
